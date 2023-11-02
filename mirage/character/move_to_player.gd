@@ -23,7 +23,7 @@ func run(node,player_,path,path_node,delta):
 														run_children(node,player_,path,path_node,delta)
 												else:
 
-														print(move_dir.length())
+
 														move_dir = -move_dir.normalized()
 														node.set_dir((move_dir * speed))
 

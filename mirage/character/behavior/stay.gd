@@ -35,8 +35,8 @@ func run(node,node_player,path,path_node,delta):
 		else:
 
 				if get_tree().current_scene.get_turn_from_name(node_player) != null:
-					var distance_ = node.global_transform.origin.distance_to(node_player.global_transform.origin)
-					if distance_ > max_in_view:
+					var _distance_ = node.global_transform.origin.distance_to(node_player.global_transform.origin)
+					if _distance_ > max_in_view:
 								get_tree().current_scene.get_turn_from_name(node_player).remove_from_turn_caracters_array(node)
 								return
 

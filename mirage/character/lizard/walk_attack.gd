@@ -28,8 +28,7 @@ func run(node,player_,path_node,path,delta):
 										if get_tree().current_scene.get_turn_from_name(player_).current_turn_caracter == node:
 														print(get_tree().current_scene.get_turn_from_name(player_).current_turn_caracter.name)
 														run_children(node,player_,path,path_node,delta)
-
-
+		
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):

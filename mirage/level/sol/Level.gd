@@ -217,6 +217,14 @@ func set_turn(char_that_started_fight):
 				node_turn_instance.connect("_mode_switched_combat_on_off",char_that_started_fight,"_mode_switched_combat_on_off_",[])
 				print("turn is set and name is  " + node_turn_instance.name)
 
+func end_turn(name_player_):
+		if !has_node("turn_holder"):
+				return
+		if !get_node("turn_holder").has_node(name_player_):
+				return
+		get_node("turn_holder").get_node(name_player_).emit_signal("_mode_switched_combat_on_off",null,1)
+		get_node("turn_holder").get_node(name_player_).queue_free()
+
 func get_turn_from_name(node_):
 		var name_= node_.name
 		if !has_node("turn_holder"):

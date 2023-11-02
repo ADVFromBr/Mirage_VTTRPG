@@ -148,22 +148,25 @@ func decrease_health(amount_of_health_decrease : int):
 	select_npc_actiion = possible_npc_actions.NPC_ATTACK
 
 
+var turn_started := false
+
 func _mode_switched_combat_on_off_(node_,_size_):
 		if node_ != self:
 			if _size_ > 1 :
 					_set_controller(Input_combat_player_controller.new(self))
-
-		else:
-			if _size_ < 2:
-					_set_controller(Input_player_controller.new(self))
-					print("mode switched")
-					print(_size_)
-
+					turn_started = true
+			elif _size_ < 2:
+							_set_controller(Input_player_controller.new(self))
+							print("mode switched")
+							if turn_started:
+								get_tree().create_timer(.6).connect("timeout",get_tree().current_scene,"end_turn",[name])
+								turn_started = false
 		if _size_ < 2:
 					_set_controller(Input_player_controller.new(self))
 					print("mode switched")
-					print(_size_)
-
+					if turn_started:
+						get_tree().create_timer(.6).connect("timeout",get_tree().current_scene,"end_turn",[name])
+						turn_started = false
 func hestore_health(helth_ : int):
 	tween.interpolate_method (self, "_hestore_health_twean", get_health(), helth_, 8, Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
 	tween.start()

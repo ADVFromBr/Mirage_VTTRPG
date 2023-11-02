@@ -18,7 +18,6 @@ func run(node,player_,path_node,path,delta):
 										print( direction.length() )
 										if direction.length() < 1 :
 												node.path_node = node.path_node + 1
-												print( path_node )
 
 										else:
 
