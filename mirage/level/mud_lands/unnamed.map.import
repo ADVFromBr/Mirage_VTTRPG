@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.map"
+type="Resource"
+path="res://.import/unnamed.map-7fcafb5201f7ab4ae48f205795126f8b.tres"
+
+[deps]
+
+source_file="res://level/mud_lands/unnamed.map"
+dest_files=[ "res://.import/unnamed.map-7fcafb5201f7ab4ae48f205795126f8b.tres" ]
+
+[params]
+

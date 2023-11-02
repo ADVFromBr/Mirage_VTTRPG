@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.map"
+type="Resource"
+path="res://.import/building.map-3d0bae8b0d0b2c9c3508c13e667b3c03.tres"
+
+[deps]
+
+source_file="res://level/sol/building.map"
+dest_files=[ "res://.import/building.map-3d0bae8b0d0b2c9c3508c13e667b3c03.tres" ]
+
+[params]
+

@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.map"
+type="Resource"
+path="res://.import/tower_1.map-c3a0e72f18d3443635da8693e71ecdf1.tres"
+
+[deps]
+
+source_file="res://level/runnee/tower_1.map"
+dest_files=[ "res://.import/tower_1.map-c3a0e72f18d3443635da8693e71ecdf1.tres" ]
+
+[params]
+

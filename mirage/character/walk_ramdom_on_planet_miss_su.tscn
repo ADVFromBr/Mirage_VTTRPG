@@ -1,0 +1,19 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://character/lizard/NPC_Behavior_tree.gd" type="Script" id=1]
+[ext_resource path="res://character/miss_su/selector_is_player_talking.gd" type="Script" id=2]
+[ext_resource path="res://character/lizard/npc_walk_random_planet_behavior.gd" type="Script" id=3]
+[ext_resource path="res://character/miss_su/talk.gd" type="Script" id=4]
+
+[node name="NPC_Behavior_tree" type="Node"]
+script = ExtResource( 1 )
+
+[node name="selecttor_is_player_talking" type="Node" parent="."]
+script = ExtResource( 2 )
+
+[node name="walk_ramdom" type="Node" parent="selecttor_is_player_talking"]
+script = ExtResource( 3 )
+speed = 5
+
+[node name="talk" type="Node" parent="selecttor_is_player_talking"]
+script = ExtResource( 4 )

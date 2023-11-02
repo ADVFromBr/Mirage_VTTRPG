@@ -1,0 +1,15 @@
+[gd_resource type="SpatialMaterial" load_steps=3 format=2]
+
+[sub_resource type="Gradient" id=1]
+interpolation_mode = 2
+offsets = PoolRealArray( 0, 0.134328, 0.176119, 0.385075, 0.424379, 0.567164, 0.707463, 0.761194 )
+colors = PoolColorArray( 0.390625, 0.272185, 0.146103, 1, 0.0363648, 0.52636, 0.899616, 1, 0, 0.525391, 1, 1, 0.329943, 0.53418, 0.0892038, 1, 0.427451, 0.345098, 0.215686, 1, 0.489165, 0.40593, 0.275615, 1, 0.549805, 0.465702, 0.3345, 1, 1, 1, 1, 1 )
+
+[sub_resource type="GradientTexture" id=2]
+gradient = SubResource( 1 )
+
+[resource]
+params_diffuse_mode = 4
+params_specular_mode = 3
+albedo_texture = SubResource( 2 )
+metallic_specular = 1.0

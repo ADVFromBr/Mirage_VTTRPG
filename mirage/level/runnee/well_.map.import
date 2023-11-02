@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.map"
+type="Resource"
+path="res://.import/well_.map-6e4c8ec89d676fbb1ee84ed3ff0e20b3.tres"
+
+[deps]
+
+source_file="res://level/runnee/well_.map"
+dest_files=[ "res://.import/well_.map-6e4c8ec89d676fbb1ee84ed3ff0e20b3.tres" ]
+
+[params]
+

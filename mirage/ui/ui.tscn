@@ -1,0 +1,303 @@
+[gd_scene load_steps=24 format=2]
+
+[ext_resource path="res://ui/dialogue_.tscn" type="PackedScene" id=1]
+[ext_resource path="res://ui/Inventory.tscn" type="PackedScene" id=2]
+[ext_resource path="res://textures/ui/ui.png" type="Texture" id=3]
+[ext_resource path="res://ui/new_styleboxflat.tres" type="StyleBox" id=4]
+[ext_resource path="res://textures/ui/forward.png" type="Texture" id=5]
+[ext_resource path="res://ui/button_style.tres" type="StyleBox" id=6]
+[ext_resource path="res://textures/ui/health_.png" type="Texture" id=7]
+[ext_resource path="res://textures/ui/heat.png" type="Texture" id=8]
+[ext_resource path="res://textures/ui/progress.png" type="Texture" id=9]
+[ext_resource path="res://textures/ui/istamina_.png" type="Texture" id=10]
+[ext_resource path="res://ui/stats.gd" type="Script" id=11]
+[ext_resource path="res://ui/fade_-3.tscn" type="PackedScene" id=12]
+[ext_resource path="res://textures/ui/shoot.png" type="Texture" id=13]
+[ext_resource path="res://textures/ui/push_.png" type="Texture" id=14]
+[ext_resource path="res://textures/ui/punch.png" type="Texture" id=15]
+[ext_resource path="res://textures/ui/back_.png" type="Texture" id=16]
+[ext_resource path="res://ui/menu_.tscn" type="PackedScene" id=17]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0.6, 0.6, 0.6, 0 )
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 50, 33 )
+
+[sub_resource type="Theme" id=2]
+
+[sub_resource type="RectangleShape2D" id=4]
+extents = Vector2( 1112, 434 )
+
+[sub_resource type="Shader" id=5]
+code = "shader_type canvas_item;
+
+uniform int resX = 32;
+uniform int resY = 32;
+
+// 0.100392156862 is the cube root of 255
+uniform vec3 rgb255 = vec3(0.100392156862, 0.100392156862, 0.100392156862);
+
+void fragment() {
+	float uvX = UV.x - mod(UV.x * float(resX), 1) / float(resX);
+	float uvY = UV.y - mod(UV.y * float(resY), 1) / float(resY);
+	vec2 grid_uv = vec2(uvX, uvY);
+	
+	vec4 col = texture(TEXTURE, grid_uv);
+	
+	if(col.r < 1.0 && col.g < 1.0 && col.b < 1.0) {
+		vec3 remainder = mod(col.rgb, rgb255);
+		col.rgb = col.rgb - remainder;
+	}
+	
+	COLOR = col;
+}"
+
+[sub_resource type="ShaderMaterial" id=6]
+shader = SubResource( 5 )
+shader_param/resX = 32
+shader_param/resY = 32
+shader_param/rgb255 = Vector3( 0.100392, 0.100392, 0.100392 )
+
+[node name="CanvasLayer" type="CanvasLayer"]
+
+[node name="TextureRect" type="TextureRect" parent="."]
+margin_top = 440.0
+margin_right = 1084.0
+margin_bottom = 655.0
+rect_scale = Vector2( 1, 0.7 )
+texture = ExtResource( 3 )
+
+[node name="touch_button" type="Button" parent="TextureRect"]
+margin_left = 464.0
+margin_top = 22.8571
+margin_right = 594.0
+margin_bottom = 102.857
+rect_scale = Vector2( 0.755, 1 )
+custom_styles/hover = ExtResource( 4 )
+custom_styles/pressed = ExtResource( 6 )
+custom_styles/focus = ExtResource( 6 )
+custom_styles/disabled = ExtResource( 6 )
+custom_styles/normal = SubResource( 1 )
+
+[node name="rotate" type="Button" parent="TextureRect"]
+margin_left = 736.0
+margin_top = 342.857
+margin_right = 866.0
+margin_bottom = 412.857
+rect_scale = Vector2( 0.755, 1 )
+custom_styles/hover = ExtResource( 4 )
+custom_styles/pressed = ExtResource( 6 )
+custom_styles/focus = ExtResource( 6 )
+custom_styles/disabled = ExtResource( 6 )
+custom_styles/normal = SubResource( 1 )
+
+[node name="attack_push" type="Button" parent="TextureRect"]
+margin_left = 576.0
+margin_top = 22.8571
+margin_right = 696.0
+margin_bottom = 102.857
+rect_scale = Vector2( 0.755, 1 )
+custom_styles/hover = ExtResource( 4 )
+custom_styles/pressed = ExtResource( 6 )
+custom_styles/focus = ExtResource( 6 )
+custom_styles/disabled = ExtResource( 6 )
+custom_styles/normal = SubResource( 1 )
+
+[node name="current_holding" type="TextureRect" parent="TextureRect"]
+anchor_right = 0.015
+margin_left = 120.0
+margin_top = 45.7143
+margin_right = 203.74
+margin_bottom = 135.715
+rect_scale = Vector2( 2.006, 2.2 )
+
+[node name="grab" type="TextureRect" parent="TextureRect"]
+visible = false
+margin_left = 584.0
+margin_top = 34.2857
+margin_right = 659.0
+margin_bottom = 80.2857
+texture = ExtResource( 14 )
+
+[node name="TextureButton" type="TextureButton" parent="TextureRect"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="punch" type="TextureRect" parent="TextureRect"]
+visible = false
+margin_left = 696.0
+margin_top = 34.2857
+margin_right = 771.0
+margin_bottom = 80.2857
+texture = ExtResource( 15 )
+
+[node name="shoot" type="TextureRect" parent="TextureRect"]
+visible = false
+margin_left = 808.0
+margin_top = 34.2857
+margin_right = 883.0
+margin_bottom = 80.2857
+texture = ExtResource( 13 )
+
+[node name="shoot_button" type="Button" parent="TextureRect"]
+margin_left = 800.0
+margin_top = 22.8572
+margin_right = 930.0
+margin_bottom = 102.857
+rect_scale = Vector2( 0.755, 1 )
+custom_styles/hover = ExtResource( 4 )
+custom_styles/pressed = ExtResource( 6 )
+custom_styles/focus = ExtResource( 6 )
+custom_styles/disabled = ExtResource( 6 )
+custom_styles/normal = SubResource( 1 )
+
+[node name="forward" type="TouchScreenButton" parent="TextureRect"]
+position = Vector2( 576, 91.4286 )
+shape = SubResource( 3 )
+action = "ui_up"
+
+[node name="TextureRect" type="TextureRect" parent="TextureRect/forward"]
+margin_left = 8.0
+margin_top = 11.4286
+margin_right = 83.0
+margin_bottom = 57.4286
+texture = ExtResource( 5 )
+
+[node name="touch_button_t" type="TouchScreenButton" parent="TextureRect"]
+position = Vector2( 448, 22.8571 )
+shape = SubResource( 3 )
+
+[node name="attack_button_t" type="TouchScreenButton" parent="TextureRect"]
+position = Vector2( 680, 22.8572 )
+shape = SubResource( 3 )
+
+[node name="back_button_t" type="TouchScreenButton" parent="TextureRect"]
+position = Vector2( 688, 102.857 )
+shape = SubResource( 3 )
+action = "open_inventory"
+
+[node name="attack_push_t" type="TouchScreenButton" parent="TextureRect"]
+position = Vector2( 576, 22.8572 )
+shape = SubResource( 3 )
+
+[node name="shoot_button_t" type="TouchScreenButton" parent="TextureRect"]
+position = Vector2( 800, 22.8572 )
+shape = SubResource( 3 )
+
+[node name="TextureRect" type="TextureRect" parent="TextureRect"]
+margin_left = 696.0
+margin_top = 102.857
+margin_right = 771.0
+margin_bottom = 148.857
+texture = ExtResource( 16 )
+
+[node name="attack_button" type="Button" parent="TextureRect"]
+margin_left = 688.0
+margin_top = 22.8571
+margin_right = 818.0
+margin_bottom = 102.857
+rect_scale = Vector2( 0.755, 1 )
+custom_styles/hover = ExtResource( 4 )
+custom_styles/pressed = ExtResource( 6 )
+custom_styles/focus = ExtResource( 6 )
+custom_styles/disabled = ExtResource( 6 )
+custom_styles/normal = SubResource( 1 )
+
+[node name="TextureRect2" type="TextureRect" parent="TextureRect"]
+margin_left = 544.0
+margin_top = 148.6
+margin_right = 619.0
+margin_bottom = 194.6
+rect_rotation = 179.968
+texture = ExtResource( 5 )
+
+[node name="back" type="TouchScreenButton" parent="TextureRect"]
+position = Vector2( 464, 91.4286 )
+shape = SubResource( 3 )
+action = "ui_down"
+
+[node name="stats" type="Control" parent="."]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -216.0
+margin_top = -128.0
+margin_right = -176.0
+margin_bottom = -88.0
+rect_scale = Vector2( 0.8, 0.9 )
+script = ExtResource( 11 )
+
+[node name="health" type="TextureProgress" parent="stats"]
+margin_right = 40.0
+margin_bottom = 135.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = SubResource( 2 )
+value = 55.0
+rounded = true
+texture_under = ExtResource( 9 )
+texture_over = ExtResource( 9 )
+texture_progress = ExtResource( 7 )
+fill_mode = 3
+tint_under = Color( 0.196078, 0.0470588, 0.0470588, 1 )
+tint_progress = Color( 1, 0, 0, 1 )
+nine_patch_stretch = true
+
+[node name="strength" type="TextureProgress" parent="stats"]
+margin_left = 70.0
+margin_right = 110.0
+margin_bottom = 135.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = SubResource( 2 )
+value = 100.0
+rounded = true
+texture_under = ExtResource( 9 )
+texture_over = ExtResource( 9 )
+texture_progress = ExtResource( 10 )
+fill_mode = 3
+nine_patch_stretch = true
+
+[node name="heat" type="TextureProgress" parent="stats"]
+margin_left = 140.0
+margin_right = 180.0
+margin_bottom = 135.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = SubResource( 2 )
+value = 55.0
+rounded = true
+texture_under = ExtResource( 9 )
+texture_over = ExtResource( 9 )
+texture_progress = ExtResource( 8 )
+fill_mode = 3
+nine_patch_stretch = true
+
+[node name="Control" parent="." instance=ExtResource( 1 )]
+visible = false
+
+[node name="Inventory" parent="." instance=ExtResource( 2 )]
+visible = false
+anchor_left = 1.0
+margin_left = 32.0
+margin_top = 280.0
+margin_right = 32.0
+margin_bottom = -296.0
+
+[node name="inv_" type="TouchScreenButton" parent="."]
+position = Vector2( -128, -168 )
+scale = Vector2( 1, 0.7 )
+shape = SubResource( 4 )
+passby_press = true
+action = "inv_grab"
+
+[node name="TextureButton" parent="." instance=ExtResource( 17 )]
+
+[node name="fade" parent="." instance=ExtResource( 12 )]
+
+[node name="TextureRect2" type="TextureRect" parent="."]
+material = SubResource( 6 )
+anchor_right = 1.0
+anchor_bottom = 1.0

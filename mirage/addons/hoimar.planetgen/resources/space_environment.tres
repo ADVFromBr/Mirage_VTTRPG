@@ -1,0 +1,18 @@
+[gd_resource type="Environment" format=2]
+
+[resource]
+background_mode = 3
+background_color = Color( 1, 1, 1, 1 )
+ambient_light_color = Color( 1, 1, 1, 1 )
+ambient_light_sky_contribution = 0.0
+fog_enabled = true
+fog_color = Color( 0.607843, 0.607843, 0.607843, 1 )
+fog_sun_color = Color( 1, 1, 1, 1 )
+tonemap_mode = 4
+auto_exposure_scale = 0.1
+dof_blur_near_distance = 0.03
+dof_blur_near_transition = 0.02
+glow_intensity = 0.2
+glow_bloom = 0.2
+glow_blend_mode = 1
+glow_bicubic_upscale = true

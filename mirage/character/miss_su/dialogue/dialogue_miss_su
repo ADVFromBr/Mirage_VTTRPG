@@ -1,0 +1,159 @@
+{
+	"sheets": [
+		{
+			"name": "sheets",
+			"columns": [
+				{
+					"typeStr": "1",
+					"name": "np_speech"
+				},
+				{
+					"typeStr": "8",
+					"name": "player_option",
+					"display": null
+				},
+				{
+					"typeStr": "8",
+					"name": "question_1",
+					"display": null
+				},
+				{
+					"typeStr": "8",
+					"name": "question_2",
+					"display": null
+				}
+			],
+			"lines": [
+				{
+					"np_speech": "What you want?",
+					"player_option": [
+						{
+							"option_1": [
+								{
+									"text": "Nothing.",
+									"np_speech": "...",
+									"player_option": [
+										{
+											"next_": 0
+										}
+									]
+								}
+							]
+						}
+					],
+					"question_1": [
+						{
+							"text": "Where are we?",
+							"answer": "In the Silverlee Mines outpost, north of Court"
+						}
+					],
+					"question_2": [
+						{
+							"text": "What's that well?",
+							"answer": "An old mine."
+						}
+					]
+				}
+			],
+			"separators": [],
+			"props": {}
+		},
+		{
+			"name": "sheets@player_option",
+			"props": {
+				"hide": true
+			},
+			"separators": [],
+			"lines": [],
+			"columns": [
+				{
+					"typeStr": "8",
+					"name": "option_1",
+					"display": null
+				}
+			]
+		},
+		{
+			"name": "sheets@player_option@option_1",
+			"props": {
+				"hide": true
+			},
+			"separators": [],
+			"lines": [],
+			"columns": [
+				{
+					"typeStr": "1",
+					"name": "text",
+					"display": null
+				},
+				{
+					"typeStr": "1",
+					"name": "np_speech",
+					"display": null
+				},
+				{
+					"typeStr": "8",
+					"name": "player_option",
+					"display": null
+				}
+			]
+		},
+		{
+			"name": "sheets@player_option@option_1@player_option",
+			"props": {
+				"hide": true
+			},
+			"separators": [],
+			"lines": [],
+			"columns": [
+				{
+					"typeStr": "3",
+					"name": "next_",
+					"display": null
+				}
+			]
+		},
+		{
+			"name": "sheets@question_1",
+			"props": {
+				"hide": true
+			},
+			"separators": [],
+			"lines": [],
+			"columns": [
+				{
+					"typeStr": "1",
+					"name": "text",
+					"display": null
+				},
+				{
+					"typeStr": "1",
+					"name": "answer",
+					"display": null
+				}
+			]
+		},
+		{
+			"name": "sheets@question_2",
+			"props": {
+				"hide": true
+			},
+			"separators": [],
+			"lines": [],
+			"columns": [
+				{
+					"typeStr": "1",
+					"name": "text",
+					"display": null
+				},
+				{
+					"typeStr": "1",
+					"name": "answer",
+					"display": null
+				}
+			]
+		}
+	],
+	"customTypes": [],
+	"compress": false
+}

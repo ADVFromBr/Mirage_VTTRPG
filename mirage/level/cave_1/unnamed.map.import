@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.map"
+type="Resource"
+path="res://.import/unnamed.map-76370da819e021a601dbebb5edf7ffd3.tres"
+
+[deps]
+
+source_file="res://level/cave_1/unnamed.map"
+dest_files=[ "res://.import/unnamed.map-76370da819e021a601dbebb5edf7ffd3.tres" ]
+
+[params]
+

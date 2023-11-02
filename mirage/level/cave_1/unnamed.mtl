@@ -1,0 +1,12 @@
+newmtl ground
+map_Kd textures\ground.png
+
+newmtl ground_1
+map_Kd textures\ground_1.png
+
+newmtl rock
+map_Kd textures\rock.png
+
+newmtl side
+map_Kd textures\side.png
+

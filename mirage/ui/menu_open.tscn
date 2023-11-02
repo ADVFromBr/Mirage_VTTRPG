@@ -1,0 +1,79 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://ui/close_menu.gd" type="Script" id=1]
+[ext_resource path="res://ui/quit_button.tscn" type="PackedScene" id=2]
+[ext_resource path="res://textures/ui/back_close_menu.png" type="Texture" id=3]
+[ext_resource path="res://ui/sound_slider.gd" type="Script" id=4]
+[ext_resource path="res://textures/ui/SOUND_.png" type="Texture" id=5]
+[ext_resource path="res://ui/minus.png" type="Texture" id=6]
+[ext_resource path="res://ui/plus.png" type="Texture" id=7]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 30, 30 )
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 40, 40 )
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 162, 22 )
+
+[node name="Control" type="Control"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="quit_button" parent="." instance=ExtResource( 2 )]
+margin_left = 298.0
+margin_top = 316.0
+margin_right = 353.0
+margin_bottom = 371.0
+rect_pivot_offset = Vector2( -1288, -280 )
+
+[node name="TouchScreenButton" type="TouchScreenButton" parent="quit_button"]
+shape = SubResource( 1 )
+
+[node name="TextureButton" type="TextureButton" parent="."]
+margin_left = 192.0
+margin_top = 208.0
+margin_right = 280.0
+margin_bottom = 296.0
+texture_normal = ExtResource( 3 )
+script = ExtResource( 1 )
+
+[node name="TouchScreenButton" type="TouchScreenButton" parent="TextureButton"]
+shape = SubResource( 2 )
+
+[node name="Control" type="Control" parent="."]
+margin_left = 335.0
+margin_top = 204.0
+margin_right = 375.0
+margin_bottom = 244.0
+script = ExtResource( 4 )
+
+[node name="TouchScreenButton" type="TouchScreenButton" parent="Control"]
+position = Vector2( -2, 5 )
+shape = SubResource( 3 )
+action = "inv_grab_"
+
+[node name="HSlider" type="HSlider" parent="Control/TouchScreenButton"]
+margin_left = 41.0
+margin_top = 14.0
+margin_right = 263.0
+margin_bottom = 30.0
+min_value = -40.0
+max_value = 0.0
+rounded = true
+
+[node name="Minus" type="Sprite" parent="Control/TouchScreenButton"]
+position = Vector2( 7, 29 )
+scale = Vector2( 0.7, 0.7 )
+texture = ExtResource( 6 )
+
+[node name="Plus" type="Sprite" parent="Control/TouchScreenButton"]
+position = Vector2( 297, 24 )
+scale = Vector2( 0.7, 0.7 )
+texture = ExtResource( 7 )
+
+[node name="Sound" type="Sprite" parent="Control"]
+position = Vector2( -47, 24 )
+scale = Vector2( 0.545455, 0.545455 )
+texture = ExtResource( 5 )

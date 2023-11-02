@@ -1,0 +1,6 @@
+[gd_resource type="SpatialMaterial" format=2]
+
+[resource]
+flags_world_triplanar = true
+uv1_scale = Vector3( 0.1, 0.1, 0.1 )
+uv1_triplanar = true

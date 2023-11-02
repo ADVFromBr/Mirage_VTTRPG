@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.map"
+type="Resource"
+path="res://.import/building.map-ee0b52b30e9f7e505226d48b6955aee2.tres"
+
+[deps]
+
+source_file="res://level/mud_lands/building.map"
+dest_files=[ "res://.import/building.map-ee0b52b30e9f7e505226d48b6955aee2.tres" ]
+
+[params]
+

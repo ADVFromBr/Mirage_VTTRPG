@@ -1,0 +1,85 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://character/lizard/npc_oppoent.gd" type="Script" id=1]
+[ext_resource path="res://character/miss_su/miss_su.tres" type="Resource" id=2]
+[ext_resource path="res://character/Sprite.gd" type="Script" id=3]
+[ext_resource path="res://character/miss_hu/spritesheet (11).png" type="Texture" id=4]
+[ext_resource path="res://character/walk_ramdom_on_planet_miss_su.tscn" type="PackedScene" id=5]
+[ext_resource path="res://sfx/footstep/530588__nox_sound__footsteps_boots_tile_mono.wav" type="AudioStream" id=6]
+[ext_resource path="res://character/miss_su/inventory_villager.gd" type="Script" id=7]
+
+[sub_resource type="CapsuleShape" id=1]
+
+[sub_resource type="Animation" id=2]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite3D:collun")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0 ]
+}
+
+[sub_resource type="Animation" id=3]
+resource_name = "sstart"
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite3D:collun")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 0.5, 0.8 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2, 3 ]
+}
+
+[node name="Miss_hu" type="RigidBody"]
+mode = 1
+contacts_reported = 2
+contact_monitor = true
+can_sleep = false
+script = ExtResource( 1 )
+character = ExtResource( 2 )
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
+shape = SubResource( 1 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "sstart"
+anims/RESET = SubResource( 2 )
+anims/sstart = SubResource( 3 )
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.05
+one_shot = true
+autostart = true
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform( 2.5, 0, 0, 0, 2.5, 0, 0, 0, 2.5, 0.109846, -0.0535093, -0.0298159 )
+billboard = 1
+texture = ExtResource( 4 )
+hframes = 4
+vframes = 15
+script = ExtResource( 3 )
+
+[node name="item_sound" type="AudioStreamPlayer3D" parent="."]
+
+[node name="footstep" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource( 6 )
+unit_size = 8.0
+
+[node name="Spatial" type="Spatial" parent="."]
+script = ExtResource( 7 )
+
+[node name="NPC_Behavior_tree" parent="." instance=ExtResource( 5 )]
+
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

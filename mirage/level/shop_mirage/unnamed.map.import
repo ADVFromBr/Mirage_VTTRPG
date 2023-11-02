@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.map"
+type="Resource"
+path="res://.import/unnamed.map-b2d9fbb8a2be40ecdf020a3197fbf277.tres"
+
+[deps]
+
+source_file="res://level/shop_mirage/unnamed.map"
+dest_files=[ "res://.import/unnamed.map-b2d9fbb8a2be40ecdf020a3197fbf277.tres" ]
+
+[params]
+

@@ -1,0 +1,138 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://models/door_script.gd" type="Script" id=1]
+
+[sub_resource type="PlaneMesh" id=1]
+
+[sub_resource type="SpatialMaterial" id=2]
+albedo_color = Color( 0.301961, 0.180392, 0.121569, 1 )
+
+[sub_resource type="ConcavePolygonShape" id=3]
+data = PoolVector3Array( 1, 0, 1, -1, 0, 1, 1, 0, -1, -1, 0, 1, -1, 0, -1, 1, 0, -1 )
+
+[sub_resource type="SpatialMaterial" id=6]
+albedo_color = Color( 0.27451, 0.0745098, 0.0745098, 1 )
+
+[sub_resource type="CubeMesh" id=7]
+
+[sub_resource type="Animation" id=4]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:translation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector3( -1.85966e-05, 5.96046e-08, 0.0106363 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector3( 90, 0, 0 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath(".:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector3( 0.5, 1, 1 ) ]
+}
+
+[sub_resource type="Animation" id=5]
+resource_name = "open"
+length = 3.0
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:translation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 3 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector3( -1.85966e-05, 5.96046e-08, 0.0106363 ), Vector3( -0.400514, 5.96046e-08, -0.293257 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 3 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector3( 90, 0, 0 ), Vector3( 90, 90, 0 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath(".:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector3( 0.5, 1, 1 ) ]
+}
+tracks/3/type = "method"
+tracks/3/path = NodePath("door")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 2.4 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "queue_free"
+} ]
+}
+
+[node name="Spatial" type="Spatial"]
+transform = Transform( 1.5, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0 )
+
+[node name="door_" type="MeshInstance" parent="."]
+transform = Transform( 0.5, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, -1.85966e-05, 5.96046e-08, 0.0106363 )
+mesh = SubResource( 1 )
+material/0 = SubResource( 2 )
+
+[node name="door" type="StaticBody" parent="door_"]
+
+[node name="door" type="CollisionShape" parent="door_/door"]
+shape = SubResource( 3 )
+
+[node name="MeshInstance" type="MeshInstance" parent="door_"]
+transform = Transform( 0.1, 0, 0, 0, 0.084, -1.72511e-09, 0, 7.24545e-10, 0.2, -0.894238, 1.67638e-08, 0.387671 )
+material_override = SubResource( 6 )
+mesh = SubResource( 7 )
+
+[node name="MeshInstance2" type="MeshInstance" parent="door_"]
+transform = Transform( 0.1, 0, 0, 0, 0.084, -1.72511e-09, 0, 7.24545e-10, 0.2, -0.894238, -2.98023e-08, -0.688313 )
+material_override = SubResource( 6 )
+mesh = SubResource( 7 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+root_node = NodePath("../door_")
+anims/RESET = SubResource( 4 )
+anims/open = SubResource( 5 )
+script = ExtResource( 1 )

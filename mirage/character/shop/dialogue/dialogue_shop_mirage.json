@@ -1,0 +1,302 @@
+{
+	"sheets": [
+		{
+			"name": "sheets",
+			"columns": [
+				{
+					"typeStr": "1",
+					"name": "np_speech"
+				},
+				{
+					"typeStr": "8",
+					"name": "player_option",
+					"display": null
+				},
+				{
+					"typeStr": "8",
+					"name": "question_1",
+					"display": null
+				},
+				{
+					"typeStr": "8",
+					"name": "question_2",
+					"display": null
+				},
+				{
+					"typeStr": "8",
+					"name": "quest_1",
+					"display": null
+				}
+			],
+			"lines": [
+				{
+					"np_speech": "Greetings Traveller. What can I do to you this day?",
+					"player_option": [
+						{
+							"option_1": [
+								{
+									"text": "What are you selling?",
+									"np_speech": "Water and healing potions.",
+									"player_option": [
+										{
+											"next_": 0
+										}
+									]
+								}
+							]
+						}
+					],
+					"question_1": [
+						{
+							"text": "Where are we?",
+							"answer": "In the Silverlee Mines outpost, north of Courtee"
+						}
+					],
+					"question_2": [
+						{
+							"text": "What is that hole?",
+							"answer": "An old mine."
+						}
+					],
+					"quest_1": [
+						{
+							"np_speech": "You seem to be strong, couldn't you help me by collecting water for some water?",
+							"require": "vessel",
+							"add": "vessel",
+							"requirements_to_finish_quest": [
+								{
+									"item": "vessel_water"
+								}
+							],
+							"asnwer": "Thank you.",
+							"name": "Water for me",
+							"option_1": [
+								{
+									"text": "I accept",
+									"choice": 1,
+									"add": "vessel",
+									"answer": "Thank you."
+								}
+							],
+							"reward": [
+								{
+									"item": "vessel"
+								}
+							],
+							"np_speech_end": "Thank you."
+						}
+					]
+				}
+			],
+			"separators": [],
+			"props": {}
+		},
+		{
+			"name": "sheets@player_option",
+			"props": {
+				"hide": true
+			},
+			"separators": [],
+			"lines": [],
+			"columns": [
+				{
+					"typeStr": "8",
+					"name": "option_1",
+					"display": null
+				}
+			]
+		},
+		{
+			"name": "sheets@player_option@option_1",
+			"props": {
+				"hide": true
+			},
+			"separators": [],
+			"lines": [],
+			"columns": [
+				{
+					"typeStr": "1",
+					"name": "text",
+					"display": null
+				},
+				{
+					"typeStr": "1",
+					"name": "np_speech",
+					"display": null
+				},
+				{
+					"typeStr": "8",
+					"name": "player_option",
+					"display": null
+				}
+			]
+		},
+		{
+			"name": "sheets@player_option@option_1@player_option",
+			"props": {
+				"hide": true
+			},
+			"separators": [],
+			"lines": [],
+			"columns": [
+				{
+					"typeStr": "3",
+					"name": "next_",
+					"display": null
+				}
+			]
+		},
+		{
+			"name": "sheets@question_1",
+			"props": {
+				"hide": true
+			},
+			"separators": [],
+			"lines": [],
+			"columns": [
+				{
+					"typeStr": "1",
+					"name": "text",
+					"display": null
+				},
+				{
+					"typeStr": "1",
+					"name": "answer",
+					"display": null
+				}
+			]
+		},
+		{
+			"name": "sheets@question_2",
+			"props": {
+				"hide": true
+			},
+			"separators": [],
+			"lines": [],
+			"columns": [
+				{
+					"typeStr": "1",
+					"name": "text",
+					"display": null
+				},
+				{
+					"typeStr": "1",
+					"name": "answer",
+					"display": null
+				}
+			]
+		},
+		{
+			"name": "sheets@quest_1",
+			"props": {
+				"hide": true
+			},
+			"separators": [],
+			"lines": [],
+			"columns": [
+				{
+					"typeStr": "1",
+					"name": "np_speech",
+					"display": null
+				},
+				{
+					"typeStr": "1",
+					"name": "require",
+					"display": null
+				},
+				{
+					"typeStr": "1",
+					"name": "add",
+					"display": null
+				},
+				{
+					"typeStr": "8",
+					"name": "requirements_to finish_quest",
+					"display": null
+				},
+				{
+					"typeStr": "1",
+					"name": "asnwer"
+				},
+				{
+					"typeStr": "1",
+					"name": "name"
+				},
+				{
+					"typeStr": "8",
+					"name": "option_1"
+				},
+				{
+					"typeStr": "1",
+					"name": "np_speech_end",
+					"display": null
+				},
+				{
+					"typeStr": "8",
+					"name": "reward"
+				}
+			]
+		},
+		{
+			"name": "sheets@quest_1@requirements_to finish_quest",
+			"props": {
+				"hide": true
+			},
+			"separators": [],
+			"lines": [],
+			"columns": [
+				{
+					"typeStr": "1",
+					"name": "item",
+					"display": null
+				}
+			]
+		},
+		{
+			"name": "sheets@quest_1@option_1",
+			"props": {
+				"hide": true
+			},
+			"separators": [],
+			"lines": [],
+			"columns": [
+				{
+					"typeStr": "1",
+					"name": "text",
+					"display": null
+				},
+				{
+					"typeStr": "3",
+					"name": "choice",
+					"display": null
+				},
+				{
+					"typeStr": "1",
+					"name": "add",
+					"display": null
+				},
+				{
+					"typeStr": "1",
+					"name": "answer"
+				}
+			]
+		},
+		{
+			"name": "sheets@quest_1@reward",
+			"props": {
+				"hide": true
+			},
+			"separators": [],
+			"lines": [],
+			"columns": [
+				{
+					"typeStr": "1",
+					"name": "item",
+					"display": null
+				}
+			]
+		}
+	],
+	"customTypes": [],
+	"compress": false
+}

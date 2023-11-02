@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.map"
+type="Resource"
+path="res://.import/unnamed_city.map-542819468a47fe7e53c951ebf2af79b5.tres"
+
+[deps]
+
+source_file="res://level/courtee/unnamed_city.map"
+dest_files=[ "res://.import/unnamed_city.map-542819468a47fe7e53c951ebf2af79b5.tres" ]
+
+[params]
+

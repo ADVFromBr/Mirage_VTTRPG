@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.map"
+type="Resource"
+path="res://.import/forge.map-b01bbf7087fc581b4725ed48baed5224.tres"
+
+[deps]
+
+source_file="res://level/courtee/forge.map"
+dest_files=[ "res://.import/forge.map-b01bbf7087fc581b4725ed48baed5224.tres" ]
+
+[params]
+

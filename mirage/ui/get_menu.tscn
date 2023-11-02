@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://ui/add_grid_menu.gd" type="Script" id=1]
+[ext_resource path="res://textures/ui/grab_1.png" type="Texture" id=2]
+
+[node name="get_menu" type="TextureRect"]
+margin_left = -402.0
+margin_top = -254.0
+margin_right = -22.0
+margin_bottom = -74.0
+texture = ExtResource( 2 )
+expand = true
+script = ExtResource( 1 )

@@ -1,0 +1,63 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://ui/button_chose_map.gd" type="Script" id=1]
+[ext_resource path="res://textures/ui/Lecoqia 2023-11-01-18-40.png" type="Texture" id=2]
+[ext_resource path="res://textures/ui/back_close_menu.png" type="Texture" id=3]
+[ext_resource path="res://ui/next_map.gd" type="Script" id=4]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 111, 66 )
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 111, 66 )
+
+[node name="map_world" type="Sprite"]
+position = Vector2( 499, 272 )
+scale = Vector2( 0.88, 1 )
+texture = ExtResource( 2 )
+
+[node name="city_1" type="TextureProgress" parent="."]
+process_priority = 6
+margin_left = -69.3181
+margin_top = -136.0
+margin_right = 96.6815
+margin_bottom = 30.0
+rect_pivot_offset = Vector2( -368, -13 )
+script = ExtResource( 1 )
+level_choice = "dungeon"
+
+[node name="TouchScreenButton" type="TouchScreenButton" parent="city_1"]
+shape = SubResource( 1 )
+
+[node name="city_2" type="TextureProgress" parent="."]
+margin_left = -318.182
+margin_top = -121.0
+margin_right = -152.182
+margin_bottom = 45.0
+rect_pivot_offset = Vector2( -368, -13 )
+script = ExtResource( 1 )
+level_choice = "dungeon_5"
+
+[node name="TouchScreenButton" type="TouchScreenButton" parent="city_2"]
+position = Vector2( 14, 47 )
+shape = SubResource( 1 )
+
+[node name="next_map" type="TextureButton" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -1211.0
+margin_top = -51.0
+margin_right = 60.9934
+margin_bottom = 555.0
+texture_normal = ExtResource( 3 )
+texture_pressed = ExtResource( 3 )
+texture_hover = ExtResource( 3 )
+texture_disabled = ExtResource( 3 )
+texture_focused = ExtResource( 3 )
+script = ExtResource( 4 )
+
+[node name="TouchScreenButton" type="TouchScreenButton" parent="next_map"]
+position = Vector2( -51.1364, -19 )
+shape = SubResource( 2 )
+
+[connection signal="pressed" from="city_1/TouchScreenButton" to="city_1" method="_on_TouchScreenButton_pressed"]

@@ -1,0 +1,120 @@
+[gd_scene load_steps=19 format=2]
+
+[ext_resource path="res://character/lizard/npc_oppoent.gd" type="Script" id=1]
+[ext_resource path="res://character/stay_npc.tscn" type="PackedScene" id=2]
+[ext_resource path="res://character/lizard/spritesheet (18).png" type="Texture" id=3]
+[ext_resource path="res://character/Sprite.gd" type="Script" id=4]
+[ext_resource path="res://character/move_to_player.gd" type="Script" id=5]
+[ext_resource path="res://character/look at.tscn" type="PackedScene" id=6]
+[ext_resource path="res://character/walk.tscn" type="PackedScene" id=7]
+[ext_resource path="res://character/lizard/either_decorator_distance.gd" type="Script" id=8]
+[ext_resource path="res://character/lizard/attack_npc.gd" type="Script" id=9]
+[ext_resource path="res://character/lizard/NPC_Behavior_tree.gd" type="Script" id=10]
+[ext_resource path="res://character/walk_world.gd" type="Script" id=11]
+[ext_resource path="res://sfx/character/other/461518__15gpanskabokstefflova_nicola__dog_growling-3.wav" type="AudioStream" id=12]
+[ext_resource path="res://sfx/character/other/461518__15gpanskabokstefflova_nicola__dog_growling-2.wav" type="AudioStream" id=13]
+[ext_resource path="res://character/damage.tscn" type="PackedScene" id=14]
+[ext_resource path="res://character/lizard/walk_attack.gd" type="Script" id=15]
+
+[sub_resource type="CapsuleShape" id=1]
+height = 0.7
+
+[sub_resource type="Animation" id=2]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite3D:collun")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0 ]
+}
+
+[sub_resource type="Animation" id=3]
+resource_name = "sstart"
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite3D:collun")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.3, 0.6, 0.9 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2, 3 ]
+}
+
+[node name="lizard" type="RigidBody"]
+physics_interpolation_mode = 1
+collision_layer = 255
+collision_mask = 3
+mode = 2
+contacts_reported = 1
+contact_monitor = true
+can_sleep = false
+script = ExtResource( 1 )
+select_npc_actiion = 7
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.346062, 0 )
+shape = SubResource( 1 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "sstart"
+anims/RESET = SubResource( 2 )
+anims/sstart = SubResource( 3 )
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 0, -0.156738, -0.141937 )
+billboard = 1
+alpha_cut = 1
+texture = ExtResource( 3 )
+hframes = 4
+vframes = 15
+script = ExtResource( 4 )
+
+[node name="item_sound" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource( 13 )
+unit_size = 22.0
+max_db = 6.0
+
+[node name="footstep" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource( 12 )
+unit_size = 11.0
+
+[node name="damage" parent="." instance=ExtResource( 14 )]
+
+[node name="NPC_Behavior_tree" type="Node" parent="."]
+script = ExtResource( 10 )
+
+[node name="stay_npc" parent="NPC_Behavior_tree" instance=ExtResource( 2 )]
+max_in_view = 555
+lost_sight = 35
+
+[node name="either_decorator" type="Node" parent="NPC_Behavior_tree/stay_npc"]
+script = ExtResource( 8 )
+max_distance = 555
+
+[node name="walk" parent="NPC_Behavior_tree/stay_npc/either_decorator" instance=ExtResource( 7 )]
+script = ExtResource( 11 )
+speed = 7
+
+[node name="attack" type="Node" parent="NPC_Behavior_tree/stay_npc/either_decorator"]
+script = ExtResource( 15 )
+
+[node name="look at" parent="NPC_Behavior_tree/stay_npc/either_decorator/attack" instance=ExtResource( 6 )]
+
+[node name="move_to_player" type="Node" parent="NPC_Behavior_tree/stay_npc/either_decorator/attack"]
+script = ExtResource( 5 )
+speed = 6.0
+
+[node name="attack" type="Node" parent="NPC_Behavior_tree/stay_npc/either_decorator/attack/move_to_player"]
+script = ExtResource( 9 )
+range_ = 40
+damage_ = 5

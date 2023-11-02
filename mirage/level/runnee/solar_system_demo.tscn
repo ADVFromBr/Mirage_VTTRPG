@@ -1,0 +1,511 @@
+[gd_scene load_steps=40 format=2]
+
+[ext_resource path="res://addons/hoimar.planetgen/scripts/celestial_bodies/solar_system.gd" type="Script" id=1]
+[ext_resource path="res://ui/ui.tscn" type="PackedScene" id=2]
+[ext_resource path="res://addons/hoimar.planetgen/planet_presets/earthlike_planet_settings.tres" type="Resource" id=3]
+[ext_resource path="res://addons/qodot/src/nodes/qodot_map.gd" type="Script" id=4]
+[ext_resource path="res://addons/hoimar.planetgen/scripts/celestial_bodies/planet.gd" type="Script" id=5]
+[ext_resource path="res://character/player/Player_character.tscn" type="PackedScene" id=6]
+[ext_resource path="res://addons/hoimar.planetgen/resources/textures/water_normal_2.png" type="Texture" id=8]
+[ext_resource path="res://addons/qodot/game_definitions/fgd/qodot_fgd.tres" type="Resource" id=9]
+[ext_resource path="res://addons/hoimar.planetgen/scripts/terrain/terrain_manager.gd" type="Script" id=10]
+[ext_resource path="res://addons/hoimar.planetgen/resources/materials/water.shader" type="Shader" id=11]
+[ext_resource path="res://textures/rock_stone.png" type="Texture" id=12]
+[ext_resource path="res://addons/hoimar.planetgen/planet_presets/sun_settings.tres" type="Resource" id=14]
+[ext_resource path="res://addons/hoimar.planetgen/scenes/celestial_bodies/atmosphere.tscn" type="PackedScene" id=15]
+[ext_resource path="res://addons/hoimar.planetgen/resources/materials/sun_bloom_material.tres" type="Material" id=16]
+[ext_resource path="res://addons/hoimar.planetgen/scripts/celestial_bodies/sun.gd" type="Script" id=17]
+[ext_resource path="res://addons/hoimar.planetgen/resources/materials/water.tres" type="Material" id=18]
+[ext_resource path="res://level/sol/Level.gd" type="Script" id=28]
+[ext_resource path="res://addons/hoimar.planetgen/scripts/terrain/A_star.gd" type="Script" id=29]
+[ext_resource path="res://sfx/background/645305__darkshroom__desert_wind.wav" type="AudioStream" id=33]
+
+[sub_resource type="SphereMesh" id=1]
+material = ExtResource( 18 )
+radius = 26.0
+height = 52.0
+radial_segments = 256
+rings = 128
+
+[sub_resource type="QuadMesh" id=2]
+material = ExtResource( 16 )
+size = Vector2( 6000, 5600 )
+
+[sub_resource type="Gradient" id=78]
+interpolation_mode = 2
+offsets = PoolRealArray( 0, 0.424379, 0.567164, 0.761194 )
+colors = PoolColorArray( 0.390625, 0.272185, 0.146103, 1, 0.427451, 0.345098, 0.215686, 1, 0.489165, 0.40593, 0.275615, 1, 1, 1, 1, 1 )
+
+[sub_resource type="GradientTexture" id=79]
+gradient = SubResource( 78 )
+
+[sub_resource type="SpatialMaterial" id=80]
+params_diffuse_mode = 4
+params_specular_mode = 3
+albedo_texture = SubResource( 79 )
+metallic_specular = 1.0
+
+[sub_resource type="Shader" id=55]
+code = "// Wind Waker style water - NekotoArts
+// Adapted from https://www.shadertoy.com/view/3tKBDz
+// After which I added in some fractal Brownian motion
+// as well as vertex displacement
+
+shader_type spatial;
+
+uniform vec4 WATER_COL : hint_color =  vec4(0.04, 0.38, 0.88, 1.0);
+uniform vec4 WATER2_COL : hint_color =  vec4(0.04, 0.35, 0.78, 1.0);
+uniform vec4 FOAM_COL : hint_color = vec4(0.8125, 0.9609, 0.9648, 1.0);
+uniform float distortion_speed = 2.0;
+uniform vec2 tile = vec2(5.0, 5.0);
+uniform float height = 2.0;
+uniform vec2 wave_size = vec2(2.0, 2.0);
+uniform float wave_speed = 1.5;
+
+const float M_2PI = 6.283185307;
+const float M_6PI = 18.84955592;
+
+float random(vec2 uv) {
+    return fract(sin(dot(uv.xy,
+        vec2(12.9898,78.233))) *
+            43758.5453123);
+}
+
+float noise(vec2 uv) {
+    vec2 uv_index = floor(uv);
+    vec2 uv_fract = fract(uv);
+
+    // Four corners in 2D of a tile
+    float a = random(uv_index);
+    float b = random(uv_index + vec2(1.0, 0.0));
+    float c = random(uv_index + vec2(0.0, 1.0));
+    float d = random(uv_index + vec2(1.0, 1.0));
+
+    vec2 blur = smoothstep(0.0, 1.0, uv_fract);
+
+    return mix(a, b, blur.x) +
+            (c - a) * blur.y * (1.0 - blur.x) +
+            (d - b) * blur.x * blur.y;
+}
+
+float fbm(vec2 uv) {
+    int octaves = 6;
+    float amplitude = 0.5;
+    float frequency = 3.0;
+	float value = 0.0;
+	
+    for(int i = 0; i < octaves; i++) {
+        value += amplitude * noise(frequency * uv);
+        amplitude *= 0.5;
+        frequency *= 2.0;
+    }
+    return value;
+}
+
+float circ(vec2 pos, vec2 c, float s)
+{
+    c = abs(pos - c);
+    c = min(c, 1.0 - c);
+
+    return smoothstep(0.0, 0.002, sqrt(s) - sqrt(dot(c, c))) * -1.0;
+}
+
+// Foam pattern for the water constructed out of a series of circles
+float waterlayer(vec2 uv)
+{
+    uv = mod(uv, 1.0); // Clamp to [0..1]
+	
+    float ret = 1.0;
+    ret += circ(uv, vec2(0.37378, 0.277169), 0.0268181);
+    ret += circ(uv, vec2(0.0317477, 0.540372), 0.0193742);
+    ret += circ(uv, vec2(0.430044, 0.882218), 0.0232337);
+    ret += circ(uv, vec2(0.641033, 0.695106), 0.0117864);
+    ret += circ(uv, vec2(0.0146398, 0.0791346), 0.0299458);
+    ret += circ(uv, vec2(0.43871, 0.394445), 0.0289087);
+    ret += circ(uv, vec2(0.909446, 0.878141), 0.028466);
+    ret += circ(uv, vec2(0.310149, 0.686637), 0.0128496);
+    ret += circ(uv, vec2(0.928617, 0.195986), 0.0152041);
+    ret += circ(uv, vec2(0.0438506, 0.868153), 0.0268601);
+    ret += circ(uv, vec2(0.308619, 0.194937), 0.00806102);
+    ret += circ(uv, vec2(0.349922, 0.449714), 0.00928667);
+    ret += circ(uv, vec2(0.0449556, 0.953415), 0.023126);
+    ret += circ(uv, vec2(0.117761, 0.503309), 0.0151272);
+    ret += circ(uv, vec2(0.563517, 0.244991), 0.0292322);
+    ret += circ(uv, vec2(0.566936, 0.954457), 0.00981141);
+    ret += circ(uv, vec2(0.0489944, 0.200931), 0.0178746);
+    ret += circ(uv, vec2(0.569297, 0.624893), 0.0132408);
+    ret += circ(uv, vec2(0.298347, 0.710972), 0.0114426);
+    ret += circ(uv, vec2(0.878141, 0.771279), 0.00322719);
+    ret += circ(uv, vec2(0.150995, 0.376221), 0.00216157);
+    ret += circ(uv, vec2(0.119673, 0.541984), 0.0124621);
+    ret += circ(uv, vec2(0.629598, 0.295629), 0.0198736);
+    ret += circ(uv, vec2(0.334357, 0.266278), 0.0187145);
+    ret += circ(uv, vec2(0.918044, 0.968163), 0.0182928);
+    ret += circ(uv, vec2(0.965445, 0.505026), 0.006348);
+    ret += circ(uv, vec2(0.514847, 0.865444), 0.00623523);
+    ret += circ(uv, vec2(0.710575, 0.0415131), 0.00322689);
+    ret += circ(uv, vec2(0.71403, 0.576945), 0.0215641);
+    ret += circ(uv, vec2(0.748873, 0.413325), 0.0110795);
+    ret += circ(uv, vec2(0.0623365, 0.896713), 0.0236203);
+    ret += circ(uv, vec2(0.980482, 0.473849), 0.00573439);
+    ret += circ(uv, vec2(0.647463, 0.654349), 0.0188713);
+    ret += circ(uv, vec2(0.651406, 0.981297), 0.00710875);
+    ret += circ(uv, vec2(0.428928, 0.382426), 0.0298806);
+    ret += circ(uv, vec2(0.811545, 0.62568), 0.00265539);
+    ret += circ(uv, vec2(0.400787, 0.74162), 0.00486609);
+    ret += circ(uv, vec2(0.331283, 0.418536), 0.00598028);
+    ret += circ(uv, vec2(0.894762, 0.0657997), 0.00760375);
+    ret += circ(uv, vec2(0.525104, 0.572233), 0.0141796);
+    ret += circ(uv, vec2(0.431526, 0.911372), 0.0213234);
+    ret += circ(uv, vec2(0.658212, 0.910553), 0.000741023);
+    ret += circ(uv, vec2(0.514523, 0.243263), 0.0270685);
+    ret += circ(uv, vec2(0.0249494, 0.252872), 0.00876653);
+    ret += circ(uv, vec2(0.502214, 0.47269), 0.0234534);
+    ret += circ(uv, vec2(0.693271, 0.431469), 0.0246533);
+    ret += circ(uv, vec2(0.415, 0.884418), 0.0271696);
+    ret += circ(uv, vec2(0.149073, 0.41204), 0.00497198);
+    ret += circ(uv, vec2(0.533816, 0.897634), 0.00650833);
+    ret += circ(uv, vec2(0.0409132, 0.83406), 0.0191398);
+    ret += circ(uv, vec2(0.638585, 0.646019), 0.0206129);
+    ret += circ(uv, vec2(0.660342, 0.966541), 0.0053511);
+    ret += circ(uv, vec2(0.513783, 0.142233), 0.00471653);
+    ret += circ(uv, vec2(0.124305, 0.644263), 0.00116724);
+    ret += circ(uv, vec2(0.99871, 0.583864), 0.0107329);
+    ret += circ(uv, vec2(0.894879, 0.233289), 0.00667092);
+    ret += circ(uv, vec2(0.246286, 0.682766), 0.00411623);
+    ret += circ(uv, vec2(0.0761895, 0.16327), 0.0145935);
+    ret += circ(uv, vec2(0.949386, 0.802936), 0.0100873);
+    ret += circ(uv, vec2(0.480122, 0.196554), 0.0110185);
+    ret += circ(uv, vec2(0.896854, 0.803707), 0.013969);
+    ret += circ(uv, vec2(0.292865, 0.762973), 0.00566413);
+    ret += circ(uv, vec2(0.0995585, 0.117457), 0.00869407);
+    ret += circ(uv, vec2(0.377713, 0.00335442), 0.0063147);
+    ret += circ(uv, vec2(0.506365, 0.531118), 0.0144016);
+    ret += circ(uv, vec2(0.408806, 0.894771), 0.0243923);
+    ret += circ(uv, vec2(0.143579, 0.85138), 0.00418529);
+    ret += circ(uv, vec2(0.0902811, 0.181775), 0.0108896);
+    ret += circ(uv, vec2(0.780695, 0.394644), 0.00475475);
+    ret += circ(uv, vec2(0.298036, 0.625531), 0.00325285);
+    ret += circ(uv, vec2(0.218423, 0.714537), 0.00157212);
+    ret += circ(uv, vec2(0.658836, 0.159556), 0.00225897);
+    ret += circ(uv, vec2(0.987324, 0.146545), 0.0288391);
+    ret += circ(uv, vec2(0.222646, 0.251694), 0.00092276);
+    ret += circ(uv, vec2(0.159826, 0.528063), 0.00605293);
+	return max(ret, 0.0);
+}
+
+// Procedural texture generation for the water
+vec3 water(vec2 uv, vec3 cdir, float iTime)
+{
+    uv *= vec2(0.25);
+	uv += fbm(uv) * 0.2;
+
+    // Parallax height distortion with two directional waves at
+    // slightly different angles.
+    vec2 a = 0.025 * cdir.xz / cdir.y; // Parallax offset
+    float h = sin(uv.x + iTime); // Height at UV
+    uv += a * h;
+    h = sin(0.841471 * uv.x - 0.540302 * uv.y + iTime);
+    uv += a * h;
+    
+    // Texture distortion
+    float d1 = mod(uv.x + uv.y, M_2PI);
+    float d2 = mod((uv.x + uv.y + 0.25) * 1.3, M_6PI);
+    d1 = iTime * 0.07 + d1;
+    d2 = iTime * 0.5 + d2;
+    vec2 dist = vec2(
+    	sin(d1) * 0.15 + sin(d2) * 0.05,
+    	cos(d1) * 0.15 + cos(d2) * 0.05
+    );
+    
+    vec3 ret = mix(WATER_COL.rgb, WATER2_COL.rgb, waterlayer(uv + dist.xy));
+    ret = mix(ret, FOAM_COL.rgb, waterlayer(vec2(1.0) - uv - dist.yx));
+    return ret;
+}
+
+
+void vertex(){
+	float time = TIME * wave_speed;
+	vec2 uv = UV * wave_size;
+	float d1 = mod(uv.x + uv.y, M_2PI);
+    float d2 = mod((uv.x + uv.y + 0.25) * 1.3, M_6PI);
+    d1 = time * 0.07 + d1;
+    d2 = time * 0.5 + d2;
+    vec2 dist = vec2(
+    	sin(d1) * 0.15 + sin(d2) * 0.05,
+    	cos(d1) * 0.15 + cos(d2) * 0.05
+    );
+	VERTEX.y += dist.y * height;
+}
+
+void fragment()
+{
+	vec2 uv = UV;
+	
+    ALBEDO = vec3(water(uv * tile, vec3(0,1,0), TIME * distortion_speed));
+}"
+
+[sub_resource type="ShaderMaterial" id=56]
+shader = SubResource( 55 )
+shader_param/WATER_COL = Color( 0.04, 0.38, 0.88, 1 )
+shader_param/WATER2_COL = Color( 0.04, 0.35, 0.78, 1 )
+shader_param/FOAM_COL = Color( 0.262745, 0.494118, 0.501961, 1 )
+shader_param/distortion_speed = 1.0
+shader_param/tile = Vector2( 2322, 2322 )
+shader_param/height = 2.0
+shader_param/wave_size = Vector2( 111, 1 )
+shader_param/wave_speed = 1.5
+
+[sub_resource type="ShaderMaterial" id=76]
+shader = ExtResource( 11 )
+shader_param/albedo = Color( 0, 0.6, 1, 1 )
+shader_param/proximity_fade_distance = 0.003
+shader_param/planet_radius = 3200.0
+shader_param/refraction = 16.0
+shader_param/refraction_texture_channel = Plane( 1, 0, 0, 0 )
+shader_param/texture_refraction = ExtResource( 8 )
+shader_param/texture_normal = ExtResource( 8 )
+
+[sub_resource type="SphereMesh" id=77]
+material = SubResource( 76 )
+radius = 3200.0
+height = 6400.0
+radial_segments = 256
+rings = 128
+
+[sub_resource type="SpatialMaterial" id=4]
+flags_transparent = true
+albedo_color = Color( 0.282353, 0.403922, 0.764706, 0.654902 )
+metallic_specular = 0.0
+
+[sub_resource type="SphereMesh" id=5]
+flip_faces = true
+radius = 1333.0
+height = 1333.0
+is_hemisphere = true
+
+[sub_resource type="BoxShape" id=81]
+extents = Vector3( 131.323, 233.925, 347.027 )
+
+[sub_resource type="CapsuleShape" id=82]
+radius = 8100.0
+
+[sub_resource type="SpatialMaterial" id=83]
+
+[sub_resource type="SpatialMaterial" id=84]
+albedo_texture = ExtResource( 12 )
+
+[sub_resource type="ArrayMesh" id=85]
+surfaces/0 = {
+"aabb": AABB( 6, -7, 4, 6, 5, 5.00001 ),
+"array_data": PoolByteArray( 74, 86, 211, 64, 120, 150, 216, 192, 0, 0, 16, 65, 108, 198, 0, 193, 139, 62, 236, 60, 0, 0, 192, 64, 11, 104, 211, 192, 99, 83, 253, 64, 108, 198, 0, 193, 193, 61, 206, 60, 0, 0, 192, 64, 0, 0, 224, 192, 83, 124, 1, 65, 108, 198, 0, 193, 226, 61, 23, 61, 217, 89, 209, 64, 0, 0, 224, 192, 0, 0, 16, 65, 108, 198, 0, 193, 139, 62, 23, 61, 74, 86, 211, 64, 120, 150, 216, 192, 0, 0, 16, 65, 26, 100, 0, 63, 139, 62, 205, 188, 0, 0, 192, 64, 11, 104, 211, 192, 0, 0, 16, 65, 26, 100, 0, 63, 139, 62, 93, 188, 0, 0, 192, 64, 11, 104, 211, 192, 99, 83, 253, 64, 26, 100, 0, 63, 193, 61, 93, 188, 0, 0, 192, 64, 0, 0, 224, 192, 83, 124, 1, 65, 129, 0, 0, 63, 226, 61, 23, 61, 0, 0, 192, 64, 11, 104, 211, 192, 99, 83, 253, 64, 129, 0, 0, 63, 193, 61, 206, 60, 0, 0, 192, 64, 11, 104, 211, 192, 0, 0, 16, 65, 129, 0, 0, 63, 139, 62, 206, 60, 0, 0, 192, 64, 0, 0, 224, 192, 0, 0, 16, 65, 129, 0, 0, 63, 139, 62, 23, 61, 217, 89, 209, 64, 0, 0, 224, 192, 0, 0, 16, 65, 0, 129, 0, 193, 139, 62, 194, 188, 0, 0, 192, 64, 0, 0, 224, 192, 83, 124, 1, 65, 0, 129, 0, 193, 226, 61, 93, 188, 0, 0, 192, 64, 0, 0, 224, 192, 0, 0, 16, 65, 0, 129, 0, 193, 139, 62, 93, 188, 217, 89, 209, 64, 0, 0, 224, 192, 0, 0, 16, 65, 0, 0, 127, 63, 194, 60, 23, 61, 0, 0, 192, 64, 0, 0, 224, 192, 0, 0, 16, 65, 0, 0, 127, 63, 93, 60, 23, 61, 0, 0, 192, 64, 11, 104, 211, 192, 0, 0, 16, 65, 0, 0, 127, 63, 93, 60, 206, 60, 74, 86, 211, 64, 120, 150, 216, 192, 0, 0, 16, 65, 0, 0, 127, 63, 205, 60, 236, 60, 133, 73, 20, 65, 128, 64, 97, 192, 0, 0, 128, 64, 127, 127, 127, 193, 189, 62, 30, 57, 69, 205, 26, 65, 0, 0, 0, 192, 0, 0, 128, 64, 127, 127, 127, 193, 9, 63, 209, 53, 133, 73, 20, 65, 0, 0, 0, 192, 0, 0, 128, 64, 127, 127, 127, 193, 189, 62, 209, 53, 133, 73, 20, 65, 128, 64, 97, 192, 0, 0, 128, 64, 129, 80, 127, 193, 189, 62, 30, 57, 133, 73, 20, 65, 0, 0, 0, 192, 0, 0, 128, 64, 129, 80, 127, 193, 189, 62, 209, 53, 56, 246, 226, 64, 0, 0, 0, 192, 219, 48, 168, 64, 129, 80, 127, 193, 40, 61, 209, 53, 22, 109, 202, 64, 86, 118, 72, 192, 69, 91, 182, 64, 129, 80, 127, 193, 153, 60, 142, 56, 69, 205, 26, 65, 0, 0, 0, 192, 0, 0, 128, 64, 0, 127, 0, 63, 209, 57, 9, 191, 221, 140, 227, 64, 0, 0, 0, 192, 100, 194, 173, 64, 0, 127, 0, 63, 229, 59, 43, 189, 56, 246, 226, 64, 0, 0, 0, 192, 219, 48, 168, 64, 0, 127, 0, 63, 165, 59, 40, 189, 133, 73, 20, 65, 0, 0, 0, 192, 0, 0, 128, 64, 0, 127, 0, 63, 209, 57, 189, 190, 22, 109, 202, 64, 86, 118, 72, 192, 69, 91, 182, 64, 187, 50, 0, 63, 36, 60, 142, 56, 56, 246, 226, 64, 0, 0, 0, 192, 219, 48, 168, 64, 187, 50, 0, 63, 165, 59, 209, 53, 221, 140, 227, 64, 0, 0, 0, 192, 100, 194, 173, 64, 187, 50, 0, 63, 229, 59, 209, 53, 69, 205, 26, 65, 0, 0, 0, 192, 0, 0, 128, 64, 41, 245, 127, 63, 9, 63, 209, 53, 133, 73, 20, 65, 128, 64, 97, 192, 0, 0, 128, 64, 41, 245, 127, 63, 189, 62, 30, 57, 22, 109, 202, 64, 86, 118, 72, 192, 69, 91, 182, 64, 41, 245, 127, 63, 153, 60, 142, 56, 221, 140, 227, 64, 0, 0, 0, 192, 100, 194, 173, 64, 41, 245, 127, 63, 43, 61, 209, 53, 0, 0, 64, 65, 0, 0, 224, 192, 0, 0, 128, 64, 127, 127, 127, 193, 93, 64, 23, 61, 0, 0, 64, 65, 0, 0, 0, 192, 0, 0, 128, 64, 127, 127, 127, 193, 93, 64, 209, 53, 69, 205, 26, 65, 0, 0, 0, 192, 0, 0, 128, 64, 127, 127, 127, 193, 9, 63, 209, 53, 133, 73, 20, 65, 128, 64, 97, 192, 0, 0, 128, 64, 127, 127, 127, 193, 189, 62, 30, 57, 133, 73, 20, 65, 0, 0, 224, 192, 0, 0, 128, 64, 127, 127, 127, 193, 189, 62, 23, 61, 133, 73, 20, 65, 0, 0, 224, 192, 0, 0, 128, 64, 129, 80, 127, 193, 189, 62, 23, 61, 133, 73, 20, 65, 128, 64, 97, 192, 0, 0, 128, 64, 129, 80, 127, 193, 189, 62, 30, 57, 22, 109, 202, 64, 86, 118, 72, 192, 69, 91, 182, 64, 129, 80, 127, 193, 153, 60, 142, 56, 0, 0, 192, 64, 16, 65, 103, 192, 68, 96, 188, 64, 129, 80, 127, 193, 93, 60, 65, 57, 0, 0, 192, 64, 0, 0, 224, 192, 68, 96, 188, 64, 129, 80, 127, 193, 93, 60, 23, 61, 69, 205, 26, 65, 0, 0, 0, 192, 0, 0, 128, 64, 141, 85, 127, 193, 9, 63, 209, 53, 221, 140, 227, 64, 0, 0, 0, 192, 100, 194, 173, 64, 141, 85, 127, 193, 43, 61, 209, 53, 22, 109, 202, 64, 86, 118, 72, 192, 69, 91, 182, 64, 141, 85, 127, 193, 153, 60, 142, 56, 133, 73, 20, 65, 128, 64, 97, 192, 0, 0, 128, 64, 141, 85, 127, 193, 189, 62, 30, 57, 0, 0, 192, 64, 16, 65, 103, 192, 68, 96, 188, 64, 129, 0, 0, 63, 72, 60, 65, 57, 0, 0, 192, 64, 178, 47, 110, 192, 93, 241, 211, 64, 129, 0, 0, 63, 209, 60, 105, 57, 0, 0, 192, 64, 0, 0, 224, 192, 83, 124, 1, 65, 129, 0, 0, 63, 226, 61, 23, 61, 0, 0, 192, 64, 0, 0, 224, 192, 68, 96, 188, 64, 129, 0, 0, 63, 72, 60, 23, 61, 0, 0, 64, 65, 0, 0, 224, 192, 0, 0, 128, 64, 0, 129, 0, 193, 209, 57, 93, 192, 133, 73, 20, 65, 0, 0, 224, 192, 0, 0, 128, 64, 0, 129, 0, 193, 209, 57, 189, 190, 0, 0, 192, 64, 0, 0, 224, 192, 68, 96, 188, 64, 0, 129, 0, 193, 72, 60, 93, 188, 0, 0, 192, 64, 0, 0, 224, 192, 83, 124, 1, 65, 0, 129, 0, 193, 226, 61, 93, 188, 217, 89, 209, 64, 0, 0, 224, 192, 0, 0, 16, 65, 0, 129, 0, 193, 139, 62, 194, 188, 0, 0, 64, 65, 0, 0, 224, 192, 0, 0, 16, 65, 0, 129, 0, 193, 139, 62, 93, 192, 0, 0, 64, 65, 0, 0, 0, 192, 0, 0, 16, 65, 0, 127, 0, 63, 139, 62, 93, 192, 12, 57, 252, 64, 0, 0, 0, 192, 0, 0, 16, 65, 0, 127, 0, 63, 139, 62, 187, 189, 166, 234, 236, 64, 0, 0, 0, 192, 51, 50, 3, 65, 0, 127, 0, 63, 246, 61, 98, 189, 221, 140, 227, 64, 0, 0, 0, 192, 100, 194, 173, 64, 0, 127, 0, 63, 229, 59, 43, 189, 69, 205, 26, 65, 0, 0, 0, 192, 0, 0, 128, 64, 0, 127, 0, 63, 209, 57, 9, 191, 0, 0, 64, 65, 0, 0, 0, 192, 0, 0, 128, 64, 0, 127, 0, 63, 209, 57, 93, 192, 0, 0, 64, 65, 0, 0, 0, 192, 0, 0, 128, 64, 127, 0, 0, 193, 209, 57, 209, 53, 0, 0, 64, 65, 0, 0, 224, 192, 0, 0, 128, 64, 127, 0, 0, 193, 209, 57, 23, 61, 0, 0, 64, 65, 0, 0, 224, 192, 0, 0, 16, 65, 127, 0, 0, 193, 139, 62, 23, 61, 0, 0, 64, 65, 0, 0, 0, 192, 0, 0, 16, 65, 127, 0, 0, 193, 139, 62, 209, 53, 0, 0, 192, 64, 178, 47, 110, 192, 93, 241, 211, 64, 187, 50, 0, 63, 209, 60, 105, 57, 0, 0, 192, 64, 16, 65, 103, 192, 68, 96, 188, 64, 187, 50, 0, 63, 72, 60, 65, 57, 22, 109, 202, 64, 86, 118, 72, 192, 69, 91, 182, 64, 187, 50, 0, 63, 36, 60, 142, 56, 221, 140, 227, 64, 0, 0, 0, 192, 100, 194, 173, 64, 187, 50, 0, 63, 229, 59, 209, 53, 166, 234, 236, 64, 0, 0, 0, 192, 51, 50, 3, 65, 187, 50, 0, 63, 246, 61, 209, 53, 0, 0, 192, 64, 178, 47, 110, 192, 93, 241, 211, 64, 188, 18, 0, 63, 209, 60, 105, 57, 166, 234, 236, 64, 0, 0, 0, 192, 51, 50, 3, 65, 188, 18, 0, 63, 246, 61, 209, 53, 12, 57, 252, 64, 0, 0, 0, 192, 0, 0, 16, 65, 188, 18, 0, 63, 139, 62, 209, 53, 217, 89, 209, 64, 0, 0, 224, 192, 0, 0, 16, 65, 188, 18, 0, 63, 139, 62, 23, 61, 0, 0, 192, 64, 0, 0, 224, 192, 83, 124, 1, 65, 188, 18, 0, 63, 226, 61, 23, 61, 217, 89, 209, 64, 0, 0, 224, 192, 0, 0, 16, 65, 0, 0, 127, 63, 194, 60, 23, 61, 12, 57, 252, 64, 0, 0, 0, 192, 0, 0, 16, 65, 0, 0, 127, 63, 187, 61, 209, 53, 0, 0, 64, 65, 0, 0, 0, 192, 0, 0, 16, 65, 0, 0, 127, 63, 93, 64, 209, 53, 0, 0, 64, 65, 0, 0, 224, 192, 0, 0, 16, 65, 0, 0, 127, 63, 93, 64, 23, 61 ),
+"array_index_data": PoolByteArray( 0, 0, 1, 0, 2, 0, 0, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0, 8, 0, 9, 0, 7, 0, 9, 0, 10, 0, 11, 0, 12, 0, 13, 0, 14, 0, 15, 0, 16, 0, 14, 0, 16, 0, 17, 0, 18, 0, 19, 0, 20, 0, 21, 0, 22, 0, 23, 0, 21, 0, 23, 0, 24, 0, 25, 0, 26, 0, 27, 0, 25, 0, 27, 0, 28, 0, 29, 0, 30, 0, 31, 0, 32, 0, 33, 0, 34, 0, 32, 0, 34, 0, 35, 0, 36, 0, 37, 0, 38, 0, 36, 0, 38, 0, 39, 0, 36, 0, 39, 0, 40, 0, 41, 0, 42, 0, 43, 0, 41, 0, 43, 0, 44, 0, 41, 0, 44, 0, 45, 0, 46, 0, 47, 0, 48, 0, 46, 0, 48, 0, 49, 0, 50, 0, 51, 0, 52, 0, 50, 0, 52, 0, 53, 0, 54, 0, 55, 0, 56, 0, 54, 0, 56, 0, 57, 0, 54, 0, 57, 0, 58, 0, 54, 0, 58, 0, 59, 0, 60, 0, 61, 0, 62, 0, 60, 0, 62, 0, 63, 0, 60, 0, 63, 0, 64, 0, 60, 0, 64, 0, 65, 0, 66, 0, 67, 0, 68, 0, 66, 0, 68, 0, 69, 0, 70, 0, 71, 0, 72, 0, 70, 0, 72, 0, 73, 0, 70, 0, 73, 0, 74, 0, 75, 0, 76, 0, 77, 0, 75, 0, 77, 0, 78, 0, 75, 0, 78, 0, 79, 0, 80, 0, 81, 0, 82, 0, 80, 0, 82, 0, 83, 0 ),
+"blend_shape_data": [  ],
+"format": 2194711,
+"index_count": 132,
+"material": SubResource( 84 ),
+"primitive": 4,
+"skeleton_aabb": [  ],
+"vertex_count": 84
+}
+
+[sub_resource type="ConvexPolygonShape" id=86]
+points = PoolVector3Array( 6.60428, -6.76837, 9, 6, -6.60645, 7.91643, 6, -7, 8.09285, 6.54222, -7, 9, 6, -6.60645, 9, 6, -7, 9 )
+
+[sub_resource type="ConvexPolygonShape" id=87]
+points = PoolVector3Array( 9.26795, -3.51956, 4, 9.67511, -2, 4, 9.26795, -2, 4, 7.09256, -2, 5.25596, 6.32582, -3.13222, 5.69864, 7.11095, -2, 5.42998 )
+
+[sub_resource type="ConvexPolygonShape" id=88]
+points = PoolVector3Array( 12, -7, 4, 12, -2, 4, 9.67511, -2, 4, 9.26795, -3.51956, 4, 9.26795, -7, 4, 6.32582, -3.13222, 5.69864, 6, -3.61335, 5.88675, 6, -7, 5.88675, 7.11095, -2, 5.42998, 6, -3.72166, 6.62321, 6, -7, 8.09285, 6.54222, -7, 9, 12, -7, 9, 12, -2, 9, 7.88196, -2, 9, 7.40364, -2, 8.19976 )
+
+[sub_resource type="Environment" id=89]
+background_mode = 1
+background_color = Color( 0.449219, 0.447899, 0.41544, 0 )
+ambient_light_color = Color( 1, 1, 1, 1 )
+fog_enabled = true
+fog_color = Color( 0.623529, 0.592157, 0.529412, 0.733333 )
+fog_sun_color = Color( 1, 0.901961, 0.701961, 1 )
+fog_depth_begin = 11.0
+fog_depth_curve = 0.189465
+fog_height_max = 38.3
+tonemap_mode = 3
+tonemap_white = 16.0
+
+[node name="Level" type="Spatial"]
+script = ExtResource( 28 )
+heat_ = 58
+
+[node name="Unverse" type="Spatial" parent="."]
+script = ExtResource( 29 )
+
+[node name="SolarSystemDemo" type="Spatial" parent="Unverse"]
+script = ExtResource( 1 )
+
+[node name="Sun" type="Spatial" parent="Unverse/SolarSystemDemo" groups=["planets"]]
+transform = Transform( 0.672665, 0.0583697, 0.737632, 0, 0.996879, -0.0788837, -0.739939, 0.0530628, 0.670568, 24000, 0, 24000 )
+script = ExtResource( 17 )
+settings = ExtResource( 14 )
+solar_system_path = NodePath("..")
+sun_path = NodePath(".")
+
+[node name="TerrainManager" type="Spatial" parent="Unverse/SolarSystemDemo/Sun"]
+script = ExtResource( 10 )
+
+[node name="Atmosphere" parent="Unverse/SolarSystemDemo/Sun" instance=ExtResource( 15 )]
+visible = false
+
+[node name="WaterSphere" type="MeshInstance" parent="Unverse/SolarSystemDemo/Sun"]
+visible = false
+use_in_baked_light = true
+generate_lightmap = false
+mesh = SubResource( 1 )
+software_skinning_transform_normals = false
+
+[node name="Corona" type="MeshInstance" parent="Unverse/SolarSystemDemo/Sun"]
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0 )
+mesh = SubResource( 2 )
+
+[node name="Sunlight" type="DirectionalLight" parent="Unverse/SolarSystemDemo/Sun"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -404 )
+light_bake_mode = 0
+directional_shadow_mode = 0
+
+[node name="EarthlikePlanet" type="Spatial" parent="Unverse/SolarSystemDemo" groups=["planets"]]
+script = ExtResource( 5 )
+settings = ExtResource( 3 )
+material = SubResource( 80 )
+solar_system_path = NodePath("..")
+sun_path = NodePath("../Sun")
+
+[node name="Player" parent="Unverse/SolarSystemDemo/EarthlikePlanet" instance=ExtResource( 6 )]
+transform = Transform( 0.999987, 0.00493276, -4.57936e-05, -0.00493273, 0.999987, 0.000638932, 4.89514e-05, -0.000638697, 1, -1534.26, 2730.68, 787.284 )
+mode = 1
+gravity_scale = 1.0
+continuous_cd = false
+
+[node name="TerrainManager" type="Spatial" parent="Unverse/SolarSystemDemo/EarthlikePlanet"]
+script = ExtResource( 10 )
+
+[node name="Atmosphere" parent="Unverse/SolarSystemDemo/EarthlikePlanet" instance=ExtResource( 15 )]
+visible = false
+planet_radius = 3200.0
+atmosphere_height = 1.15
+sun_path = NodePath("../../Sun")
+shader_params/u_density = 0.1
+
+[node name="WaterSphere" type="MeshInstance" parent="Unverse/SolarSystemDemo/EarthlikePlanet"]
+visible = false
+layers = 0
+material_override = SubResource( 56 )
+generate_lightmap = false
+mesh = SubResource( 77 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Unverse/SolarSystemDemo/EarthlikePlanet"]
+layers = 0
+material_override = SubResource( 4 )
+mesh = SubResource( 5 )
+skeleton = NodePath("../..")
+
+[node name="leave" type="Spatial" parent="Unverse/SolarSystemDemo/EarthlikePlanet"]
+transform = Transform( 0.92977, -0.368141, 1.38547e-08, 0.368141, 0.92977, 5.48572e-09, 1.49012e-08, 0, 1, -1620.87, 2694.81, 775.585 )
+
+[node name="Area" type="Area" parent="Unverse/SolarSystemDemo/EarthlikePlanet/leave"]
+transform = Transform( 0.659054, -0.657327, 0.36547, 0.737821, 0.659303, -0.144707, -0.145835, 0.365021, 0.919506, 0, 0, 0 )
+collision_layer = 255
+collision_mask = 255
+
+[node name="CollisionShape" type="CollisionShape" parent="Unverse/SolarSystemDemo/EarthlikePlanet/leave/Area"]
+transform = Transform( 0.706972, 0.570812, -0.41757, -0.529165, 0.818646, 0.22317, 0.469231, 0.0631886, 0.880812, 94.6655, -236.948, -172.758 )
+shape = SubResource( 81 )
+
+[node name="Area" type="Area" parent="Unverse/SolarSystemDemo/EarthlikePlanet"]
+space_override = 3
+gravity_point = true
+gravity_vec = Vector3( 0, 0, 0 )
+gravity = 4.0
+
+[node name="CollisionShape" type="CollisionShape" parent="Unverse/SolarSystemDemo/EarthlikePlanet/Area"]
+shape = SubResource( 82 )
+
+[node name="QodotMap" type="Spatial" parent="Unverse/SolarSystemDemo/EarthlikePlanet"]
+transform = Transform( 0.999987, 0.00493276, -4.58062e-05, -0.00493273, 0.999987, 0.000638932, 4.88758e-05, -0.000638697, 1, -1536.97, 2741.68, 794.869 )
+script = ExtResource( 4 )
+map_file = "C:/Users/user/Downloads/Planet-Generato-3.x (3) (2)/Planet-Generato-3.x (6) (1)/Planet-Generato-3.x/Planet-Generator-3.x/Items/rock/unnamed.map"
+inverse_scale_factor = 16.0
+entity_fgd = ExtResource( 9 )
+base_texture_dir = "res://textures"
+texture_file_extensions = PoolStringArray( "png" )
+worldspawn_layers = [  ]
+brush_clip_texture = "special/clip"
+face_skip_texture = "special/skip"
+texture_wads = [  ]
+material_file_extension = "tres"
+default_material = SubResource( 83 )
+uv_unwrap_texel_size = 1.0
+print_profiling_data = false
+use_trenchbroom_group_hierarchy = false
+tree_attach_batch_size = 16
+set_owner_batch_size = 16
+
+[node name="iron" type="StaticBody" parent="Unverse/SolarSystemDemo/EarthlikePlanet/QodotMap"]
+
+[node name="entity_0_mesh_instance" type="MeshInstance" parent="Unverse/SolarSystemDemo/EarthlikePlanet/QodotMap/iron"]
+use_in_baked_light = true
+mesh = SubResource( 85 )
+
+[node name="entity_0_brush_0_collision_shape" type="CollisionShape" parent="Unverse/SolarSystemDemo/EarthlikePlanet/QodotMap/iron"]
+shape = SubResource( 86 )
+
+[node name="entity_0_brush_1_collision_shape" type="CollisionShape" parent="Unverse/SolarSystemDemo/EarthlikePlanet/QodotMap/iron"]
+shape = SubResource( 87 )
+
+[node name="entity_0_brush_2_collision_shape" type="CollisionShape" parent="Unverse/SolarSystemDemo/EarthlikePlanet/QodotMap/iron"]
+shape = SubResource( 88 )
+
+[node name="CanvasLayer" parent="." instance=ExtResource( 2 )]
+
+[node name="background_noise" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 33 )
+volume_db = -20.0
+autoplay = true
+
+[node name="QodotMap" type="Spatial" parent="."]
+transform = Transform( 0.999987, 0.00493276, -4.58062e-05, -0.00469045, 0.953654, 0.300866, 0.0015277, -0.300862, 0.953667, -1536.97, 2737.65, 778.555 )
+script = ExtResource( 4 )
+map_file = "C:/Users/user/Downloads/Planet-Generato-3.x (3) (2)/Planet-Generato-3.x (6) (1)/Planet-Generato-3.x/Planet-Generator-3.x/Items/rock/unnamed.map"
+inverse_scale_factor = 16.0
+entity_fgd = ExtResource( 9 )
+base_texture_dir = "res://textures"
+texture_file_extensions = PoolStringArray( "png" )
+worldspawn_layers = [  ]
+brush_clip_texture = "special/clip"
+face_skip_texture = "special/skip"
+texture_wads = [  ]
+material_file_extension = "tres"
+default_material = SubResource( 83 )
+uv_unwrap_texel_size = 1.0
+print_profiling_data = false
+use_trenchbroom_group_hierarchy = false
+tree_attach_batch_size = 16
+set_owner_batch_size = 16
+
+[node name="iron" type="StaticBody" parent="QodotMap"]
+
+[node name="entity_0_mesh_instance" type="MeshInstance" parent="QodotMap/iron"]
+use_in_baked_light = true
+mesh = SubResource( 85 )
+
+[node name="entity_0_brush_0_collision_shape" type="CollisionShape" parent="QodotMap/iron"]
+shape = SubResource( 86 )
+
+[node name="entity_0_brush_1_collision_shape" type="CollisionShape" parent="QodotMap/iron"]
+shape = SubResource( 87 )
+
+[node name="entity_0_brush_2_collision_shape" type="CollisionShape" parent="QodotMap/iron"]
+shape = SubResource( 88 )
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 89 )
+
+[connection signal="body_entered" from="Unverse/SolarSystemDemo/EarthlikePlanet/leave/Area" to="." method="_on_Area_body_entered"]
+[connection signal="body_exited" from="Unverse/SolarSystemDemo/EarthlikePlanet/leave/Area" to="." method="_on_Area_body_exited"]

@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.map"
+type="Resource"
+path="res://.import/building.map-3e66c3044b7a07e008af387dc6205ced.tres"
+
+[deps]
+
+source_file="res://level/runnee/building.map"
+dest_files=[ "res://.import/building.map-3e66c3044b7a07e008af387dc6205ced.tres" ]
+
+[params]
+

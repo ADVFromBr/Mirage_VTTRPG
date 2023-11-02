@@ -1,0 +1,23 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/530588__nox_sound__footsteps_boots_tile_mono.wav-c88d9ac7a7b5cea0a846b287bf8c6f59.sample"
+
+[deps]
+
+source_file="res://sfx/footstep/530588__nox_sound__footsteps_boots_tile_mono.wav"
+dest_files=[ "res://.import/530588__nox_sound__footsteps_boots_tile_mono.wav-c88d9ac7a7b5cea0a846b287bf8c6f59.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

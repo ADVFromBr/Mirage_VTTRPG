@@ -1,0 +1,13 @@
+[remap]
+
+importer="qodot.map"
+type="Resource"
+path="res://.import/tower_1.map-08446d50ab978d8e849ac5b2a40a15bc.tres"
+
+[deps]
+
+source_file="res://level/sol/tower_1.map"
+dest_files=[ "res://.import/tower_1.map-08446d50ab978d8e849ac5b2a40a15bc.tres" ]
+
+[params]
+

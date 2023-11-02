@@ -1,0 +1,425 @@
+[gd_scene load_steps=32 format=2]
+
+[ext_resource path="res://addons/hoimar.planetgen/scripts/celestial_bodies/solar_system.gd" type="Script" id=1]
+[ext_resource path="res://ui/ui.tscn" type="PackedScene" id=2]
+[ext_resource path="res://addons/hoimar.planetgen/planet_presets/earthlike_planet_settings.tres" type="Resource" id=3]
+[ext_resource path="res://addons/hoimar.planetgen/scripts/celestial_bodies/planet.gd" type="Script" id=5]
+[ext_resource path="res://character/player/Player_character.tscn" type="PackedScene" id=6]
+[ext_resource path="res://addons/hoimar.planetgen/resources/textures/water_normal_2.png" type="Texture" id=8]
+[ext_resource path="res://addons/hoimar.planetgen/scripts/terrain/terrain_manager.gd" type="Script" id=10]
+[ext_resource path="res://addons/hoimar.planetgen/resources/materials/water.shader" type="Shader" id=11]
+[ext_resource path="res://character/lizard/lizard_open.tscn" type="PackedScene" id=13]
+[ext_resource path="res://addons/hoimar.planetgen/planet_presets/sun_settings.tres" type="Resource" id=14]
+[ext_resource path="res://addons/hoimar.planetgen/scenes/celestial_bodies/atmosphere.tscn" type="PackedScene" id=15]
+[ext_resource path="res://addons/hoimar.planetgen/resources/materials/sun_bloom_material.tres" type="Material" id=16]
+[ext_resource path="res://addons/hoimar.planetgen/scripts/celestial_bodies/sun.gd" type="Script" id=17]
+[ext_resource path="res://addons/hoimar.planetgen/resources/materials/water.tres" type="Material" id=18]
+[ext_resource path="res://level/sol/Level.gd" type="Script" id=28]
+[ext_resource path="res://addons/hoimar.planetgen/scripts/terrain/A_star.gd" type="Script" id=29]
+[ext_resource path="res://sfx/background/645305__darkshroom__desert_wind.wav" type="AudioStream" id=33]
+
+[sub_resource type="SphereMesh" id=1]
+material = ExtResource( 18 )
+radius = 26.0
+height = 52.0
+radial_segments = 256
+rings = 128
+
+[sub_resource type="QuadMesh" id=2]
+material = ExtResource( 16 )
+size = Vector2( 6000, 5600 )
+
+[sub_resource type="Gradient" id=78]
+interpolation_mode = 2
+offsets = PoolRealArray( 0.539936, 0.690096, 0.779553 )
+colors = PoolColorArray( 0.253906, 0.150978, 0.0414085, 1, 0.489165, 0.40593, 0.275615, 1, 1, 1, 1, 1 )
+
+[sub_resource type="GradientTexture" id=79]
+gradient = SubResource( 78 )
+
+[sub_resource type="SpatialMaterial" id=80]
+params_diffuse_mode = 4
+params_specular_mode = 3
+albedo_texture = SubResource( 79 )
+metallic_specular = 1.0
+
+[sub_resource type="Shader" id=55]
+code = "// Wind Waker style water - NekotoArts
+// Adapted from https://www.shadertoy.com/view/3tKBDz
+// After which I added in some fractal Brownian motion
+// as well as vertex displacement
+
+shader_type spatial;
+
+uniform vec4 WATER_COL : hint_color =  vec4(0.04, 0.38, 0.88, 1.0);
+uniform vec4 WATER2_COL : hint_color =  vec4(0.04, 0.35, 0.78, 1.0);
+uniform vec4 FOAM_COL : hint_color = vec4(0.8125, 0.9609, 0.9648, 1.0);
+uniform float distortion_speed = 2.0;
+uniform vec2 tile = vec2(5.0, 5.0);
+uniform float height = 2.0;
+uniform vec2 wave_size = vec2(2.0, 2.0);
+uniform float wave_speed = 1.5;
+
+const float M_2PI = 6.283185307;
+const float M_6PI = 18.84955592;
+
+float random(vec2 uv) {
+    return fract(sin(dot(uv.xy,
+        vec2(12.9898,78.233))) *
+            43758.5453123);
+}
+
+float noise(vec2 uv) {
+    vec2 uv_index = floor(uv);
+    vec2 uv_fract = fract(uv);
+
+    // Four corners in 2D of a tile
+    float a = random(uv_index);
+    float b = random(uv_index + vec2(1.0, 0.0));
+    float c = random(uv_index + vec2(0.0, 1.0));
+    float d = random(uv_index + vec2(1.0, 1.0));
+
+    vec2 blur = smoothstep(0.0, 1.0, uv_fract);
+
+    return mix(a, b, blur.x) +
+            (c - a) * blur.y * (1.0 - blur.x) +
+            (d - b) * blur.x * blur.y;
+}
+
+float fbm(vec2 uv) {
+    int octaves = 6;
+    float amplitude = 0.5;
+    float frequency = 3.0;
+	float value = 0.0;
+	
+    for(int i = 0; i < octaves; i++) {
+        value += amplitude * noise(frequency * uv);
+        amplitude *= 0.5;
+        frequency *= 2.0;
+    }
+    return value;
+}
+
+float circ(vec2 pos, vec2 c, float s)
+{
+    c = abs(pos - c);
+    c = min(c, 1.0 - c);
+
+    return smoothstep(0.0, 0.002, sqrt(s) - sqrt(dot(c, c))) * -1.0;
+}
+
+// Foam pattern for the water constructed out of a series of circles
+float waterlayer(vec2 uv)
+{
+    uv = mod(uv, 1.0); // Clamp to [0..1]
+	
+    float ret = 1.0;
+    ret += circ(uv, vec2(0.37378, 0.277169), 0.0268181);
+    ret += circ(uv, vec2(0.0317477, 0.540372), 0.0193742);
+    ret += circ(uv, vec2(0.430044, 0.882218), 0.0232337);
+    ret += circ(uv, vec2(0.641033, 0.695106), 0.0117864);
+    ret += circ(uv, vec2(0.0146398, 0.0791346), 0.0299458);
+    ret += circ(uv, vec2(0.43871, 0.394445), 0.0289087);
+    ret += circ(uv, vec2(0.909446, 0.878141), 0.028466);
+    ret += circ(uv, vec2(0.310149, 0.686637), 0.0128496);
+    ret += circ(uv, vec2(0.928617, 0.195986), 0.0152041);
+    ret += circ(uv, vec2(0.0438506, 0.868153), 0.0268601);
+    ret += circ(uv, vec2(0.308619, 0.194937), 0.00806102);
+    ret += circ(uv, vec2(0.349922, 0.449714), 0.00928667);
+    ret += circ(uv, vec2(0.0449556, 0.953415), 0.023126);
+    ret += circ(uv, vec2(0.117761, 0.503309), 0.0151272);
+    ret += circ(uv, vec2(0.563517, 0.244991), 0.0292322);
+    ret += circ(uv, vec2(0.566936, 0.954457), 0.00981141);
+    ret += circ(uv, vec2(0.0489944, 0.200931), 0.0178746);
+    ret += circ(uv, vec2(0.569297, 0.624893), 0.0132408);
+    ret += circ(uv, vec2(0.298347, 0.710972), 0.0114426);
+    ret += circ(uv, vec2(0.878141, 0.771279), 0.00322719);
+    ret += circ(uv, vec2(0.150995, 0.376221), 0.00216157);
+    ret += circ(uv, vec2(0.119673, 0.541984), 0.0124621);
+    ret += circ(uv, vec2(0.629598, 0.295629), 0.0198736);
+    ret += circ(uv, vec2(0.334357, 0.266278), 0.0187145);
+    ret += circ(uv, vec2(0.918044, 0.968163), 0.0182928);
+    ret += circ(uv, vec2(0.965445, 0.505026), 0.006348);
+    ret += circ(uv, vec2(0.514847, 0.865444), 0.00623523);
+    ret += circ(uv, vec2(0.710575, 0.0415131), 0.00322689);
+    ret += circ(uv, vec2(0.71403, 0.576945), 0.0215641);
+    ret += circ(uv, vec2(0.748873, 0.413325), 0.0110795);
+    ret += circ(uv, vec2(0.0623365, 0.896713), 0.0236203);
+    ret += circ(uv, vec2(0.980482, 0.473849), 0.00573439);
+    ret += circ(uv, vec2(0.647463, 0.654349), 0.0188713);
+    ret += circ(uv, vec2(0.651406, 0.981297), 0.00710875);
+    ret += circ(uv, vec2(0.428928, 0.382426), 0.0298806);
+    ret += circ(uv, vec2(0.811545, 0.62568), 0.00265539);
+    ret += circ(uv, vec2(0.400787, 0.74162), 0.00486609);
+    ret += circ(uv, vec2(0.331283, 0.418536), 0.00598028);
+    ret += circ(uv, vec2(0.894762, 0.0657997), 0.00760375);
+    ret += circ(uv, vec2(0.525104, 0.572233), 0.0141796);
+    ret += circ(uv, vec2(0.431526, 0.911372), 0.0213234);
+    ret += circ(uv, vec2(0.658212, 0.910553), 0.000741023);
+    ret += circ(uv, vec2(0.514523, 0.243263), 0.0270685);
+    ret += circ(uv, vec2(0.0249494, 0.252872), 0.00876653);
+    ret += circ(uv, vec2(0.502214, 0.47269), 0.0234534);
+    ret += circ(uv, vec2(0.693271, 0.431469), 0.0246533);
+    ret += circ(uv, vec2(0.415, 0.884418), 0.0271696);
+    ret += circ(uv, vec2(0.149073, 0.41204), 0.00497198);
+    ret += circ(uv, vec2(0.533816, 0.897634), 0.00650833);
+    ret += circ(uv, vec2(0.0409132, 0.83406), 0.0191398);
+    ret += circ(uv, vec2(0.638585, 0.646019), 0.0206129);
+    ret += circ(uv, vec2(0.660342, 0.966541), 0.0053511);
+    ret += circ(uv, vec2(0.513783, 0.142233), 0.00471653);
+    ret += circ(uv, vec2(0.124305, 0.644263), 0.00116724);
+    ret += circ(uv, vec2(0.99871, 0.583864), 0.0107329);
+    ret += circ(uv, vec2(0.894879, 0.233289), 0.00667092);
+    ret += circ(uv, vec2(0.246286, 0.682766), 0.00411623);
+    ret += circ(uv, vec2(0.0761895, 0.16327), 0.0145935);
+    ret += circ(uv, vec2(0.949386, 0.802936), 0.0100873);
+    ret += circ(uv, vec2(0.480122, 0.196554), 0.0110185);
+    ret += circ(uv, vec2(0.896854, 0.803707), 0.013969);
+    ret += circ(uv, vec2(0.292865, 0.762973), 0.00566413);
+    ret += circ(uv, vec2(0.0995585, 0.117457), 0.00869407);
+    ret += circ(uv, vec2(0.377713, 0.00335442), 0.0063147);
+    ret += circ(uv, vec2(0.506365, 0.531118), 0.0144016);
+    ret += circ(uv, vec2(0.408806, 0.894771), 0.0243923);
+    ret += circ(uv, vec2(0.143579, 0.85138), 0.00418529);
+    ret += circ(uv, vec2(0.0902811, 0.181775), 0.0108896);
+    ret += circ(uv, vec2(0.780695, 0.394644), 0.00475475);
+    ret += circ(uv, vec2(0.298036, 0.625531), 0.00325285);
+    ret += circ(uv, vec2(0.218423, 0.714537), 0.00157212);
+    ret += circ(uv, vec2(0.658836, 0.159556), 0.00225897);
+    ret += circ(uv, vec2(0.987324, 0.146545), 0.0288391);
+    ret += circ(uv, vec2(0.222646, 0.251694), 0.00092276);
+    ret += circ(uv, vec2(0.159826, 0.528063), 0.00605293);
+	return max(ret, 0.0);
+}
+
+// Procedural texture generation for the water
+vec3 water(vec2 uv, vec3 cdir, float iTime)
+{
+    uv *= vec2(0.25);
+	uv += fbm(uv) * 0.2;
+
+    // Parallax height distortion with two directional waves at
+    // slightly different angles.
+    vec2 a = 0.025 * cdir.xz / cdir.y; // Parallax offset
+    float h = sin(uv.x + iTime); // Height at UV
+    uv += a * h;
+    h = sin(0.841471 * uv.x - 0.540302 * uv.y + iTime);
+    uv += a * h;
+    
+    // Texture distortion
+    float d1 = mod(uv.x + uv.y, M_2PI);
+    float d2 = mod((uv.x + uv.y + 0.25) * 1.3, M_6PI);
+    d1 = iTime * 0.07 + d1;
+    d2 = iTime * 0.5 + d2;
+    vec2 dist = vec2(
+    	sin(d1) * 0.15 + sin(d2) * 0.05,
+    	cos(d1) * 0.15 + cos(d2) * 0.05
+    );
+    
+    vec3 ret = mix(WATER_COL.rgb, WATER2_COL.rgb, waterlayer(uv + dist.xy));
+    ret = mix(ret, FOAM_COL.rgb, waterlayer(vec2(1.0) - uv - dist.yx));
+    return ret;
+}
+
+
+void vertex(){
+	float time = TIME * wave_speed;
+	vec2 uv = UV * wave_size;
+	float d1 = mod(uv.x + uv.y, M_2PI);
+    float d2 = mod((uv.x + uv.y + 0.25) * 1.3, M_6PI);
+    d1 = time * 0.07 + d1;
+    d2 = time * 0.5 + d2;
+    vec2 dist = vec2(
+    	sin(d1) * 0.15 + sin(d2) * 0.05,
+    	cos(d1) * 0.15 + cos(d2) * 0.05
+    );
+	VERTEX.y += dist.y * height;
+}
+
+void fragment()
+{
+	vec2 uv = UV;
+	
+    ALBEDO = vec3(water(uv * tile, vec3(0,1,0), TIME * distortion_speed));
+}"
+
+[sub_resource type="ShaderMaterial" id=56]
+shader = SubResource( 55 )
+shader_param/WATER_COL = Color( 0.04, 0.38, 0.88, 1 )
+shader_param/WATER2_COL = Color( 0.04, 0.35, 0.78, 1 )
+shader_param/FOAM_COL = Color( 0.262745, 0.494118, 0.501961, 1 )
+shader_param/distortion_speed = 1.0
+shader_param/tile = Vector2( 2322, 2322 )
+shader_param/height = 2.0
+shader_param/wave_size = Vector2( 111, 1 )
+shader_param/wave_speed = 1.5
+
+[sub_resource type="ShaderMaterial" id=76]
+shader = ExtResource( 11 )
+shader_param/albedo = Color( 0, 0.6, 1, 1 )
+shader_param/proximity_fade_distance = 0.003
+shader_param/planet_radius = 3200.0
+shader_param/refraction = 16.0
+shader_param/refraction_texture_channel = Plane( 1, 0, 0, 0 )
+shader_param/texture_refraction = ExtResource( 8 )
+shader_param/texture_normal = ExtResource( 8 )
+
+[sub_resource type="SphereMesh" id=77]
+material = SubResource( 76 )
+radius = 3200.0
+height = 6400.0
+radial_segments = 256
+rings = 128
+
+[sub_resource type="SpatialMaterial" id=4]
+flags_transparent = true
+albedo_color = Color( 0.282353, 0.403922, 0.764706, 0.654902 )
+metallic_specular = 0.0
+
+[sub_resource type="SphereMesh" id=5]
+flip_faces = true
+radius = 1333.0
+height = 1333.0
+is_hemisphere = true
+
+[sub_resource type="CapsuleShape" id=82]
+radius = 8100.0
+
+[sub_resource type="BoxShape" id=81]
+extents = Vector3( 72.4854, 189.716, 222 )
+
+[sub_resource type="Environment" id=83]
+background_mode = 1
+background_color = Color( 0.101961, 0.160784, 0.203922, 1 )
+ambient_light_color = Color( 0.458824, 0.376471, 0.384314, 1 )
+ambient_light_energy = 8.0
+fog_enabled = true
+fog_color = Color( 0, 0, 0, 0.980392 )
+fog_depth_begin = 11.0
+fog_depth_curve = 0.0583152
+tonemap_mode = 4
+tonemap_white = 16.0
+
+[node name="Level" type="Spatial"]
+script = ExtResource( 28 )
+heat_ = 58
+
+[node name="Unverse" type="Spatial" parent="."]
+script = ExtResource( 29 )
+
+[node name="SolarSystemDemo" type="Spatial" parent="Unverse"]
+script = ExtResource( 1 )
+
+[node name="Sun" type="Spatial" parent="Unverse/SolarSystemDemo" groups=["planets"]]
+transform = Transform( 0.672697, 0.0584118, 0.737599, 0, 0.996874, -0.0789438, -0.739909, 0.0531057, 0.670597, 24000, 0, 24000 )
+script = ExtResource( 17 )
+settings = ExtResource( 14 )
+solar_system_path = NodePath("..")
+sun_path = NodePath(".")
+
+[node name="TerrainManager" type="Spatial" parent="Unverse/SolarSystemDemo/Sun"]
+script = ExtResource( 10 )
+
+[node name="Atmosphere" parent="Unverse/SolarSystemDemo/Sun" instance=ExtResource( 15 )]
+visible = false
+
+[node name="WaterSphere" type="MeshInstance" parent="Unverse/SolarSystemDemo/Sun"]
+visible = false
+use_in_baked_light = true
+generate_lightmap = false
+mesh = SubResource( 1 )
+software_skinning_transform_normals = false
+
+[node name="Corona" type="MeshInstance" parent="Unverse/SolarSystemDemo/Sun"]
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0 )
+mesh = SubResource( 2 )
+
+[node name="Sunlight" type="DirectionalLight" parent="Unverse/SolarSystemDemo/Sun"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -404 )
+light_bake_mode = 0
+directional_shadow_mode = 0
+
+[node name="EarthlikePlanet" type="Spatial" parent="Unverse/SolarSystemDemo" groups=["planets"]]
+script = ExtResource( 5 )
+settings = ExtResource( 3 )
+material = SubResource( 80 )
+solar_system_path = NodePath("..")
+sun_path = NodePath("../Sun")
+
+[node name="Player" parent="Unverse/SolarSystemDemo/EarthlikePlanet" instance=ExtResource( 6 )]
+transform = Transform( 0.999987, 0.00493276, -4.57936e-05, -0.00493273, 0.999987, 0.000638932, 4.89514e-05, -0.000638697, 1, -1532.01, 2732.64, 787.284 )
+mode = 1
+gravity_scale = 1.0
+continuous_cd = false
+
+[node name="TerrainManager" type="Spatial" parent="Unverse/SolarSystemDemo/EarthlikePlanet"]
+script = ExtResource( 10 )
+
+[node name="Atmosphere" parent="Unverse/SolarSystemDemo/EarthlikePlanet" instance=ExtResource( 15 )]
+visible = false
+planet_radius = 3200.0
+atmosphere_height = 1.15
+sun_path = NodePath("../../Sun")
+shader_params/u_density = 0.1
+
+[node name="WaterSphere" type="MeshInstance" parent="Unverse/SolarSystemDemo/EarthlikePlanet"]
+visible = false
+layers = 0
+material_override = SubResource( 56 )
+generate_lightmap = false
+mesh = SubResource( 77 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Unverse/SolarSystemDemo/EarthlikePlanet"]
+layers = 0
+material_override = SubResource( 4 )
+mesh = SubResource( 5 )
+skeleton = NodePath("../..")
+
+[node name="Area" type="Area" parent="Unverse/SolarSystemDemo/EarthlikePlanet"]
+space_override = 3
+gravity_point = true
+gravity_vec = Vector3( 0, 0, 0 )
+gravity = 4.0
+
+[node name="CollisionShape" type="CollisionShape" parent="Unverse/SolarSystemDemo/EarthlikePlanet/Area"]
+shape = SubResource( 82 )
+
+[node name="leave" type="Spatial" parent="Unverse/SolarSystemDemo/EarthlikePlanet"]
+transform = Transform( 0.999988, 0.00493276, 6.5656e-06, -0.00493277, 0.999988, 0.000638674, -3.40849e-06, -0.000638697, 1, -1618.51, 2732.64, 883.447 )
+
+[node name="Area" type="Area" parent="Unverse/SolarSystemDemo/EarthlikePlanet/leave"]
+transform = Transform( 0.659054, -0.657327, 0.36547, 0.737821, 0.659303, -0.144707, -0.145835, 0.365021, 0.919506, 0, 0, 0 )
+collision_layer = 255
+collision_mask = 255
+
+[node name="CollisionShape" type="CollisionShape" parent="Unverse/SolarSystemDemo/EarthlikePlanet/leave/Area"]
+transform = Transform( 0.706972, 0.570812, -0.41757, -0.529165, 0.818646, 0.22317, 0.469231, 0.0631886, 0.880812, 35.921, -178.968, -205.092 )
+shape = SubResource( 81 )
+
+[node name="CanvasLayer" parent="." instance=ExtResource( 2 )]
+
+[node name="background_noise" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 33 )
+volume_db = -20.0
+autoplay = true
+
+[node name="lizard" parent="." instance=ExtResource( 13 )]
+transform = Transform( 1.6, 0, 0, 0, 1.6, 0, 0, 0, 1.6, -1554.74, 2720.53, 778.316 )
+
+[node name="lizard2" parent="." instance=ExtResource( 13 )]
+transform = Transform( 1.6, 0, 0, 0, 1.6, 0, 0, 0, 1.6, -1551.1, 2719.8, 835.014 )
+
+[node name="lizard3" parent="." instance=ExtResource( 13 )]
+transform = Transform( 1.6, 0, 0, 0, 1.6, 0, 0, 0, 1.6, -1584.76, 2695.99, 799.4 )
+
+[node name="lizard4" parent="." instance=ExtResource( 13 )]
+transform = Transform( 1.6, 0, 0, 0, 1.6, 0, 0, 0, 1.6, -1556.43, 2726.7, 740.666 )
+
+[node name="lizard5" parent="." instance=ExtResource( 13 )]
+transform = Transform( 1.6, 0, 0, 0, 1.6, 0, 0, 0, 1.6, -1556.43, 2786.39, 630.491 )
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 83 )
+
+[connection signal="body_entered" from="Unverse/SolarSystemDemo/EarthlikePlanet/leave/Area" to="." method="_on_Area_body_entered"]
+[connection signal="body_exited" from="Unverse/SolarSystemDemo/EarthlikePlanet/leave/Area" to="." method="_on_Area_body_exited"]
