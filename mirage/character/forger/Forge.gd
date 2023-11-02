@@ -26,7 +26,7 @@ func open_menu(_player_):
 
 				player_char.get_Inventory().get_node("get_menu").visible = true
 				if items_to_build.size() > 0:
-					player_char.get_Inventory().get_node("get_menu")._init_func_bag(self,Item.get_item(items_to_build[0].name).required)
+					player_char.get_Inventory().get_node("get_menu")._init_func_bag(self,items_to_build)
 					player_char.get_Inventory().set_adds_bkpk(player_char.get_Inventory().get_node("get_menu"))
 
 					for i in items_building:

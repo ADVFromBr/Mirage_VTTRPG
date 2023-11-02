@@ -34,7 +34,7 @@ func _attack_(node,player_,path,path_node,delta):
 		node.select_npc_actiion = node.possible_npc_actions.NPC_WALK
 # Called when the node enters the scene tree for the first time.
 func attack_(node,player_,path,path_node,delta):
-				var d_result = get_tree().current_scene.rool_a_d_twenty(node,player_.get_canva_())
+				var d_result = get_tree().current_scene.rool_a_d_twenty(node,player_.get_canva_(),"combat")
 				print(name + " is attacking")
 				var space_state = node.get_world().direct_space_state
 				var start_pos = node.global_transform.origin 

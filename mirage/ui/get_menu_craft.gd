@@ -5,7 +5,7 @@ func get_item_size():
 		return start_item_size
 
 var required_materials := []
-var current_materials := []
+var current_materials_ := []
 func set_item_size(next_item_):
 	
 	item_array_size = next_item_
@@ -32,9 +32,9 @@ func update_array():
 			value += Item.get_item(i.name_).value
 	
 	emit_signal("bag_update",_item_,item_array_size,value)
+var book_in_inventory := []
 
-
-func _init_func_bag(type_bag_ : RigidBody,required_materials_):
+func _init_func_bag(type_bag_ : RigidBody, _book_in_inventory_):
 	type_bag = type_bag_
 	var s = get_grid_size(self)
 	grid_width = s.x
@@ -47,8 +47,7 @@ func _init_func_bag(type_bag_ : RigidBody,required_materials_):
 	eq_.visible = false
 
 	get_parent().connect("removed_weapon_item_array",self,"removed_weapon_item_array_",[])
-	required_materials = required_materials_
-
+	book_in_inventory = _book_in_inventory_
 
 func get_items_():
 	return items
@@ -84,7 +83,7 @@ func insert_item(item):
 
 					get_parent().emit_signal("removed_weapon_item_array",self,Item.get_item(item.name_))
 					items.sort()
-					current_materials.append(item.name_)
+					current_materials_.append(item.name_)
 					return true
 
 		
@@ -171,21 +170,22 @@ func grab_item(pos):
 	var item = get_item_under_pos(pos)
 	if item == null:
 		return
-		
-	var all_materials_found := 0
-	for i in required_materials:
-				for i_ in current_materials:
-					if i_ == i:
-						all_materials_found += 1
-		
-	if all_materials_found == required_materials.size():
-			var item_pos = item.rect_global_position + Vector2(cell_size / 2, cell_size / 2)
-			var g_pos = pos_to_grid_coord(item_pos)
-			var item_size = get_grid_size(item)
-			set_grid_space(g_pos.x, g_pos.y, item_size.x, item_size.y, false)
+	
+	
+	var items_required := 0
+	for i in  Item.get_item("book_" + item.name_).required:
+		if current_materials_.find(i) > -1:
+			items_required += 1
+	
+			print("item found")
+	if items_required >= Item.get_item("book_" + item.name_).required.size():
+				var item_pos = item.rect_global_position + Vector2(cell_size / 2, cell_size / 2)
+				var g_pos = pos_to_grid_coord(item_pos)
+				var item_size = get_grid_size(item)
+				set_grid_space(g_pos.x, g_pos.y, item_size.x, item_size.y, false)
 
-			print("enough money ")
-			return item
+				print("enough money ")
+				return item
 
 	else:
 				return

@@ -86,7 +86,7 @@ func _continue_attacking():
 
 func type_fyre_selector(type,node_):
 		node_.mode = RigidBody.MODE_CHARACTER
-		var value = get_tree().current_scene.rool_a_d_twenty(self,parent.get_canva_())
+		var value = get_tree().current_scene.rool_a_d_twenty(self,parent.get_canva_(),"combat")
 		print(value)
 		if type == Item.type_fyre.PUSH:
 			node_.set_dir(	node_.global_transform.origin - node_.global_transform.basis.z * 22)

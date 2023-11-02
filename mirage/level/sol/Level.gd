@@ -240,27 +240,63 @@ func _on_Area_body_exited(body):
 func _on_Leave_town_body_exited(body):
 	leave_entered(body)
 
-func rool_a_d_twenty(node_,ui_):
+var dice_roll_type = {
+	
+	"level_rng" : "Your Luck Has Changed",
+	"combat" : " Combat Modifier is:",
+	
+	
+}
+
+func get_dice_type(dice_type):
+		if dice_roll_type.has(dice_type):
+				return dice_roll_type[dice_type]
+		else:
+			return "error"
+
+func rool_a_d20_func(node_,ui_,type_roll,d_twenty_,d_twenty_node):
+		ui_.add_child(d_twenty_node)
+		ui_.move_child(d_twenty_node,ui_.get_child_count())
+		d_twenty_node.get_node("D_tweenty").get_node("Value").text = str(d_twenty_)
+		d_twenty_node.get_node("text").text = get_dice_type(type_roll)
+		
+		
+		get_tree().create_timer(2).connect("timeout",self,"_on_d_Timer_timeout",[d_twenty_node])
+
+
+func rool_a_d_twenty(node_,ui_,type_roll):
 	var d_twenty_ = randi() % 20
 	var d_twenty_node = load("res://ui/d_tweenty.tscn").instance()
-	ui_.add_child(d_twenty_node)
-	ui_.move_child(d_twenty_node,ui_.get_child_count())
-	d_twenty_node.get_node("D_tweenty").get_node("Value").text = str(d_twenty_)
-	
-	get_tree().create_timer(2).connect("timeout",self,"_on_d_Timer_timeout",[d_twenty_node])
+
+	if !ui_.has_node("d_tweenty"):
+			rool_a_d20_func(node_,ui_,type_roll,d_twenty_,d_twenty_node)
+
+	else:
+			get_tree().create_timer(2).connect("timeout",self,"rool_a_d20_func",[node_,ui_,type_roll,d_twenty_,d_twenty_node])
 
 	return d_twenty_
+
 	
 func rool_a_d_twenty_casuallity(node_,ui_):
 	var d_twenty_ = randi() % 20
 	var d_twenty_node = load("res://ui/d_tweenty_casuall]ity.tscn").instance()
+	if !ui_.has_node("d_tweenty"):
+			rool_a_d_twenty_casuallity_func(node_,ui_,d_twenty_,d_twenty_node)
+
+	else:
+			get_tree().create_timer(2).connect("timeout",self,"rool_a_d_twenty_casuallity_func",[node_,ui_,d_twenty_,d_twenty_node])
+
+
+	return d_twenty_
+
+func rool_a_d_twenty_casuallity_func(node_,ui_,d_twenty_,d_twenty_node):
 	ui_.add_child(d_twenty_node)
 	ui_.move_child(d_twenty_node,ui_.get_child_count())
 	d_twenty_node.get_node("D_tweenty").get_node("Value").text = str(d_twenty_)
-	
+	d_twenty_node.get_node("text").text = get_dice_type("level_rng")
 	get_tree().create_timer(2).connect("timeout",self,"_on_d_Timer_timeout",[d_twenty_node])
+
 	
-	return d_twenty_
 func _on_d_Timer_timeout(d_):
 		d_.queue_free()
 

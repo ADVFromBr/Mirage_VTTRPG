@@ -25,7 +25,7 @@ func open_menu(_player_):
 				player_char.get_Inventory().visible = true
 				var add_ = load("res://ui/get_menu.tscn").instance()
 				player_char.get_Inventory().add_child(add_)
-				var rool_d_20 = get_tree().current_scene.rool_a_d_twenty(player_char,player_char.get_canva_())
+				var rool_d_20 = get_tree().current_scene.rool_a_d_twenty(player_char,player_char.get_canva_(),"level_rng")
 				
 				if rool_d_20 > 15:
 					for i in current_item_:
