@@ -34,7 +34,7 @@ func set_player():
 											AntithesiSystem.list_of_var_array_for_casuality_effect_[_ramdom_integer_for_ramdom_casuality_event ] = false
 								else:
 									for i_ in AntithesiSystem.list_of_var_array_for_casuality_effect_:
-											i_ = false
+											i_ = !i_
 
 func animation_finished(name_anim):
 		if name_anim == "end":
@@ -222,7 +222,9 @@ func end_turn(name_player_):
 				return
 		if !get_node("turn_holder").has_node(name_player_):
 				return
-		get_node("turn_holder").get_node(name_player_).emit_signal("_mode_switched_combat_on_off",null,1)
+
+
+		get_node("turn_holder").get_node(name_player_).emit_signal("_mode_switched_combat_on_off",null,2)
 		get_node("turn_holder").get_node(name_player_).queue_free()
 
 func get_turn_from_name(node_):

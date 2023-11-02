@@ -137,10 +137,9 @@ func play_sound_hit(col_):
 
 func init_attack(node):
 
-	
+	node.set_player(parent)
 	if get_tree().current_scene.get_turn_from_name(parent) == null:
 		get_tree().current_scene.set_turn(parent)
-		node.set_player(parent)
 		get_tree().current_scene.get_turn_from_name(parent).add_to_turn_caracters_array(node)
 			
 		get_tree().current_scene.get_turn_from_name(parent).add_to_turn_caracters_array(parent)
