@@ -13,7 +13,7 @@ script = ExtResource( 3 )
 
 [node name="walk_ramdom" type="Node" parent="selecttor_is_player_talking"]
 script = ExtResource( 2 )
-speed = 2
+speed = 0
 
 [node name="talk" type="Node" parent="selecttor_is_player_talking"]
 script = ExtResource( 1 )

@@ -10,9 +10,11 @@ extends Node
 func run(node,player_,path_node,path,delta):
 
 			if !player_:
-				if get_children()[0].has_method("run"):
-					get_children()[0].run(node,player_,path_node,path,delta)
-					
+				if get_children().size() > 1:
+					if get_children()[0].has_method("run"):
+						get_children()[0].run(node,player_,path_node,path,delta)
+						
 			else:
-				if get_children()[1].has_method("run"):
-						get_children()[1].run(node,player_,path_node,path,delta)
+				if get_children().size() > 1:
+					if get_children()[1].has_method("run"):
+							get_children()[1].run(node,player_,path_node,path,delta)
