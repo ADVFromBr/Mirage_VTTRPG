@@ -97,6 +97,7 @@ func _init_func(add):
 
 
 	for i in PlayeerStat.items_in_hand_:
+				if adds_bkpk == null:
 					get_tree().create_timer(0.6).connect("timeout",self,"pickup_item_reinset",[i.name])
 					print(i.name)
 					eq_slots._set_size(eq_rect)

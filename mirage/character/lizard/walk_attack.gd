@@ -17,10 +17,10 @@ func run(node,player_,path_node,path,delta):
 										if get_tree().current_scene.get_turn_from_name(player_) == null:
 											get_tree().current_scene.set_turn(player_)
 										
-										if get_tree().current_scene.get_turn_from_name(player_).get_turn_caracters_array().find(node) <= -1:
-													get_tree().current_scene.get_turn_from_name(player_).add_to_turn_caracters_array(node)
-										if get_tree().current_scene.get_turn_from_name(player_).get_turn_caracters_array().find(player_) <= -1:
-													get_tree().current_scene.get_turn_from_name(player_).add_to_turn_caracters_array(player_)
+
+										get_tree().current_scene.get_turn_from_name(player_).add_to_turn_caracters_array(node)
+										
+										get_tree().current_scene.get_turn_from_name(player_).add_to_turn_caracters_array(player_)
 
 										if get_tree().current_scene.get_turn_from_name(player_).current_turn_caracter == null:
 														get_tree().current_scene.get_turn_from_name(player_).current_turn_caracter = node

@@ -398,7 +398,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2617.42, 1863.24, -459.92 )
 mode = 1
 
 [node name="NPC_Pos" type="Spatial" parent="Unverse/SolarSystemDemo/EarthlikePlanet"]
-transform = Transform( 0.949929, 0, -0.312468, 0, 1, 0, 0.312468, 0, 0.949929, -2614.85, 1862.93, -467.461 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2617.36, 1863.16, -467.461 )
 
 [node name="RayCast" type="RayCast" parent="Unverse/SolarSystemDemo/EarthlikePlanet/NPC_Pos"]
 cast_to = Vector3( 0, 0, 222 )

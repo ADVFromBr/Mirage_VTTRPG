@@ -38,9 +38,15 @@ var index_attack : int
 		# Called when the node enters the scene tree for the first time.
 
 func  _attack(_index_):
-		index_attack = _index_
-		_attack_command.execute(parent,self)
+	
+		if get_tree().current_scene.get_turn_from_name(parent).current_turn_caracter == parent:
+			index_attack = _index_
+			_attack_command.execute(parent,self)
+			
+			get_tree().current_scene.get_turn_from_name(parent).switch_current_turn_caracter(parent)
 
+			
+			
 func  _interact():
 		_interact_command.execute(parent,self)
 		

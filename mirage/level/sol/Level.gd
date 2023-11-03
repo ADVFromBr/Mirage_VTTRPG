@@ -224,8 +224,8 @@ func end_turn(name_player_):
 				return
 
 
-		get_node("turn_holder").get_node(name_player_).emit_signal("_mode_switched_combat_on_off",null,1)
-		get_node("turn_holder").get_node(name_player_).queue_free()
+		get_node("turn_holder").get_node(name_player_.name).emit_signal("_mode_switched_combat_on_off",null,1)
+		get_node("turn_holder").get_node(name_player_.name).queue_free()
 
 func get_turn_from_name(node_):
 		var name_= node_.name

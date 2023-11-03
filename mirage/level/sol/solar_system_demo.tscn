@@ -531,7 +531,7 @@ script = ExtResource( 29 )
 script = ExtResource( 1 )
 
 [node name="Sun" type="Spatial" parent="Unverse/SolarSystemDemo" groups=["planets"]]
-transform = Transform( 0.671979, 0.0576538, 0.738314, 0, 0.996958, -0.0778509, -0.740564, 0.0523144, 0.669938, 24000, 0, 24000 )
+transform = Transform( 0.671044, 0.0569821, 0.739216, 0, 0.997035, -0.0768559, -0.741411, 0.0515739, 0.669058, 24000, 0, 24000 )
 visible = false
 script = ExtResource( 17 )
 settings = ExtResource( 14 )
@@ -569,7 +569,7 @@ solar_system_path = NodePath("..")
 sun_path = NodePath("../Sun")
 
 [node name="Player" parent="Unverse/SolarSystemDemo/EarthlikePlanet" instance=ExtResource( 6 )]
-transform = Transform( 0.999987, 0.00493276, -4.57936e-05, -0.00493273, 0.999987, 0.000638932, 4.89514e-05, -0.000638697, 1, -1581.9, 2697.46, 787.284 )
+transform = Transform( 0.999987, 0.00493276, -4.57936e-05, -0.00493273, 0.999987, 0.000638932, 4.89514e-05, -0.000638697, 1, -1643.03, 2666.09, 790.728 )
 mode = 1
 gravity_scale = 1.0
 continuous_cd = false

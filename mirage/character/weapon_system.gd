@@ -174,8 +174,3 @@ func attack(int_index):
 
 									
 								type_fyre_selector(int_index,intersection.collider)
-
-			if get_tree().current_scene.get_turn_from_name(parent) == null:
-						return
-
-			get_tree().current_scene.get_turn_from_name(parent).switch_current_turn_caracter(parent)
