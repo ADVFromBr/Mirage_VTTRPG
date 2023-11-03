@@ -10,10 +10,10 @@ extents = Vector2( 44, 55 )
 [node name="tutorial" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -82.0
-margin_top = -3.0
-margin_right = -82.0
-margin_bottom = -3.0
+margin_left = -64.0
+margin_top = 8.0
+margin_right = -64.0
+margin_bottom = 8.0
 script = ExtResource( 3 )
 
 [node name="TextureRect" type="TextureRect" parent="."]
