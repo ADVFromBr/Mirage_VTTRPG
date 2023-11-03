@@ -727,7 +727,7 @@ shape = SubResource( 26 )
 [node name="entity_0_brush_11_collision_shape" type="CollisionShape" parent="Unverse/SolarSystemDemo/EarthlikePlanet/forge_sol/forge_sol"]
 shape = SubResource( 27 )
 
-[node name="door_shop_courtee" type="Spatial" parent="Unverse/SolarSystemDemo/EarthlikePlanet" groups=["gate", "planets"]]
+[node name="door_shop_manee" type="Spatial" parent="Unverse/SolarSystemDemo/EarthlikePlanet" groups=["gate", "planets"]]
 transform = Transform( 0.106177, -0.256347, -0.144059, 0.0301156, 0.303439, -0.129439, 0.384473, 0.0470252, 0.0499229, -1570.16, 2704.34, 811.225 )
 
 [node name="shop_mane" type="Spatial" parent="Unverse/SolarSystemDemo/EarthlikePlanet" groups=["planets"]]

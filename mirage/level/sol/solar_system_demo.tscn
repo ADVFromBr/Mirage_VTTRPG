@@ -531,7 +531,7 @@ script = ExtResource( 29 )
 script = ExtResource( 1 )
 
 [node name="Sun" type="Spatial" parent="Unverse/SolarSystemDemo" groups=["planets"]]
-transform = Transform( 0.671044, 0.0569821, 0.739216, 0, 0.997035, -0.0768559, -0.741411, 0.0515739, 0.669058, 24000, 0, 24000 )
+transform = Transform( 0.671044, 0.056982, 0.739216, 0, 0.997035, -0.0768559, -0.741411, 0.0515739, 0.669058, 24000, 0, 24000 )
 visible = false
 script = ExtResource( 17 )
 settings = ExtResource( 14 )
@@ -755,7 +755,7 @@ script = ExtResource( 27 )
 transform = Transform( 2.98023e-08, 3.72529e-08, 0.999999, -1.67638e-08, 0.999999, -7.45058e-08, -0.999998, -1.6205e-07, -1.78814e-07, 0.223389, -2.74512, -2.62634 )
 shape = SubResource( 30 )
 
-[node name="door_shop_mirage" type="Spatial" parent="Unverse/SolarSystemDemo/EarthlikePlanet" groups=["planets"]]
+[node name="door_shop_mirage" type="Spatial" parent="Unverse/SolarSystemDemo/EarthlikePlanet" groups=["gate", "planets"]]
 transform = Transform( 0.106177, -0.256347, -0.144059, 0.0301156, 0.303439, -0.129439, 0.384473, 0.0470252, 0.0499229, -1568.5, 2706.97, 811.144 )
 
 [node name="QodotMap3" type="Spatial" parent="Unverse/SolarSystemDemo/EarthlikePlanet"]

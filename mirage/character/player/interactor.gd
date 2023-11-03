@@ -29,6 +29,8 @@ func _interact() -> void:
 								#intersection.collider.leave()
 								print(intersection.collider.name)
 								get_tree().current_scene.end(intersection.collider.get_parent().name)
+								if Globals.leave_pos.has(intersection.collider.get_parent().name):
+									PlayeerStat.next_spawn_pos_name  = Globals.leave_pos.get(intersection.collider.get_parent().name)
 					elif intersection.collider.name =="door":
 								if 	intersection.collider.get_parent().get_parent().has_node("AnimationPlayer"):
 										print(intersection.collider.get_parent().get_parent().name)

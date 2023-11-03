@@ -24,7 +24,8 @@ var leve_level_selector = {
 	"dungeon_4" : ["res://level/mud_lands/solar_system_demo.tscn", Vector2(0,5)],
 	"cave_2" : ["res://level/cave_2/cave.tscn",Vector2(0,0)],
 	"dungeon_5" : ["res://level/mane/solar_system_demo_.tscn", Vector2(1,8)],
-
+	"shop_mane" : ["res://level/shop_mane/shop_mane.tscn", Vector2(1,8)],
+	"leave_shop_manee" : ["res://level/mane/solar_system_demo_.tscn", Vector2(1,8)],
 }
 
 const npc_list = {
@@ -47,7 +48,8 @@ const leave_pos = {
 
 	"leave_shop_mirage": "door_shop_mirage",
 	"leave_shop_forge": "door_shop_forge",
-	"leave_shop_courtee": "door_shop_courtee"
+	"leave_shop_courtee": "door_shop_courtee",
+	"leave_shop_manee" : "door_shop_manee"
 }
 
 

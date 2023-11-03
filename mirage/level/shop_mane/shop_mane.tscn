@@ -181,14 +181,14 @@ tonemap_white = 16.0
 script = ExtResource( 12 )
 heat_ = 21
 
-[node name="leave_shop_courtee" type="Spatial" parent="."]
+[node name="leave_shop_manee" type="Spatial" parent="."]
 transform = Transform( 0.999999, -2.27374e-13, 0, 1.52841e-13, 1.79254, 0, 0, 0, 0.999998, 30.3572, 0, 0 )
 
-[node name="Leave" type="StaticBody" parent="leave_shop_courtee"]
+[node name="Leave" type="StaticBody" parent="leave_shop_manee"]
 transform = Transform( 1, -5.42101e-20, 0, 1.35525e-20, 1, 0, 0, 0, 1, 0, 0, 0 )
 script = ExtResource( 11 )
 
-[node name="CollisionShape" type="CollisionShape" parent="leave_shop_courtee/Leave"]
+[node name="CollisionShape" type="CollisionShape" parent="leave_shop_manee/Leave"]
 transform = Transform( 1, -4.60786e-19, 0, 3.38813e-20, 1, 0, 0, 0, 1, -3.44417, 5.51668, 22.2405 )
 shape = SubResource( 3 )
 
