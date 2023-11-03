@@ -72,7 +72,7 @@ func _integrate_forces(var state: PhysicsDirectBodyState):
 				
 		npc_behavior_tree.current_action(self,player_char,path_node,path,state.step)
 		set_linear_velocity((local_gravity * 3) + move_dir)
-		orient_character_to_dir(-move_dir.normalized(), state.step)
+		orient_character_to_dir(move_dir.normalized(), state.step)
 		
 		print(rot_dir)
 		

@@ -220,11 +220,11 @@ func set_turn(char_that_started_fight):
 func end_turn(name_player_):
 		if !has_node("turn_holder"):
 				return
-		if !get_node("turn_holder").has_node(name_player_):
+		if !get_node("turn_holder").has_node(name_player_.name):
 				return
 
 
-		get_node("turn_holder").get_node(name_player_).emit_signal("_mode_switched_combat_on_off",null,2)
+		get_node("turn_holder").get_node(name_player_).emit_signal("_mode_switched_combat_on_off",null,1)
 		get_node("turn_holder").get_node(name_player_).queue_free()
 
 func get_turn_from_name(node_):

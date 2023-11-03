@@ -27,6 +27,11 @@ func start_() -> void:
 		get_tree().current_scene.get_node("CanvasLayer/TextureRect").get_node("touch_button_t").connect("pressed",self,"_interact",[])
 		get_tree().current_scene.get_node("CanvasLayer/TextureRect").get_node("attack_push_t").connect("pressed",self,"_attack",[1])
 		get_tree().current_scene.get_node("CanvasLayer/TextureRect").get_node("shoot_button_t").connect("pressed",self,"_attack",[2])
+		get_tree().current_scene.get_node("CanvasLayer/TextureRect").get_node("rule_book_button_t").connect("pressed",self,"rule_book_button",[])
+
+
+func rule_book_button():
+	_book_open.execute(parent,self)
 
 var input_ : Vector3
 var index_attack : int

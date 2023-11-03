@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=2]
+[gd_scene load_steps=25 format=2]
 
 [ext_resource path="res://ui/dialogue_.tscn" type="PackedScene" id=1]
 [ext_resource path="res://ui/Inventory.tscn" type="PackedScene" id=2]
@@ -17,6 +17,7 @@
 [ext_resource path="res://textures/ui/punch.png" type="Texture" id=15]
 [ext_resource path="res://textures/ui/back_.png" type="Texture" id=16]
 [ext_resource path="res://ui/menu_.tscn" type="PackedScene" id=17]
+[ext_resource path="res://textures/ui/book_tutorial.png" type="Texture" id=18]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.6, 0.6, 0.6, 0 )
@@ -216,6 +217,18 @@ texture = ExtResource( 5 )
 position = Vector2( 464, 91.4286 )
 shape = SubResource( 3 )
 action = "ui_down"
+
+[node name="rule_book_button_t" type="TouchScreenButton" parent="TextureRect"]
+position = Vector2( 796, 95.7142 )
+shape = SubResource( 3 )
+
+[node name="TextureRect3" type="TextureRect" parent="TextureRect"]
+margin_left = 817.0
+margin_top = 94.2857
+margin_right = 892.0
+margin_bottom = 169.286
+rect_scale = Vector2( 0.8, 0.9 )
+texture = ExtResource( 18 )
 
 [node name="stats" type="Control" parent="."]
 anchor_left = 0.5

@@ -150,6 +150,19 @@ func decrease_health(amount_of_health_decrease : int):
 
 var turn_started := false
 
+
+
+
+func open_book():
+	
+	if !get_canva_().has_node("tutorial"):
+			var tutorial_ = load("res://textures/ui/tutorial.tscn").instance()
+			get_canva_().add_child(tutorial_)
+	else:
+		get_canva_().get_node("tutorial").queue_free()
+	
+
+
 func end_turn():
 	get_tree().current_scene.end_turn(name)
 
@@ -158,14 +171,14 @@ func _mode_switched_combat_on_off_(node_,_size_):
 			if _size_ > 1 :
 					_set_controller(Input_combat_player_controller.new(self))
 					turn_started = true
-			elif _size_ <= 1:
+
+			elif _size_ < 2:
 							_set_controller(Input_player_controller.new(self))
 							print("mode switched")
 							if turn_started:
 								get_tree().create_timer(1).connect("timeout",self,"end_turn",[])
 								turn_started = false
-
-		if _size_ <= 1:
+		if _size_ < 2:
 					_set_controller(Input_player_controller.new(self))
 					print("mode switched")
 					if turn_started:

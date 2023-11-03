@@ -314,7 +314,7 @@ script = ExtResource( 16 )
 script = ExtResource( 2 )
 
 [node name="Sun" type="Spatial" parent="Unverse/SolarSystemDemo" groups=["planets"]]
-transform = Transform( 0.676631, 0.0379606, 0.735334, 0, 0.998667, -0.0515544, -0.736314, 0.0348836, 0.675731, 24000, 0, 24000 )
+transform = Transform( 0.676631, 0.0379016, 0.735337, 0, 0.998671, -0.0514742, -0.736314, 0.0348294, 0.675734, 24000, 0, 24000 )
 visible = false
 script = ExtResource( 1 )
 settings = ExtResource( 19 )
@@ -394,17 +394,17 @@ transform = Transform( 0.996444, -0.00898368, -0.0837902, -0.00898366, 0.977311,
 shape = SubResource( 78 )
 
 [node name="Player" parent="Unverse/SolarSystemDemo/EarthlikePlanet" instance=ExtResource( 9 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2617.42, 1866.15, -459.92 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2617.42, 1863.24, -459.92 )
 mode = 1
 
 [node name="NPC_Pos" type="Spatial" parent="Unverse/SolarSystemDemo/EarthlikePlanet"]
-transform = Transform( 0.99544, 0, 0.095394, 0, 1, 0, -0.095394, 0, 0.99544, -2618.59, 1865.74, -468.725 )
+transform = Transform( 0.99544, 0, 0.095394, 0, 1, 0, -0.095394, 0, 0.99544, -2614.71, 1862.93, -468.725 )
 
 [node name="RayCast" type="RayCast" parent="Unverse/SolarSystemDemo/EarthlikePlanet/NPC_Pos"]
 cast_to = Vector3( 0, 0, 222 )
 
 [node name="NPC_Pos2" type="Spatial" parent="Unverse/SolarSystemDemo/EarthlikePlanet"]
-transform = Transform( -0.939884, -0.0464543, 0.338322, 0.170227, -0.922578, 0.346227, 0.296045, 0.383005, 0.875024, -2621.02, 1862.76, -468.937 )
+transform = Transform( -0.939884, -0.0464543, 0.338322, 0.170227, -0.922578, 0.346227, 0.296045, 0.383005, 0.875024, -2617.14, 1859.95, -468.937 )
 
 [node name="RayCast" type="RayCast" parent="Unverse/SolarSystemDemo/EarthlikePlanet/NPC_Pos2"]
 cast_to = Vector3( 0, 0, 222 )
