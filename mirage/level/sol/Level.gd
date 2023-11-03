@@ -30,11 +30,16 @@ func set_player():
 								var _ramdom_integer_for_ramdom_casuality_event = randi() % AntithesiSystem.list_of_var_array_for_casuality_effect_.size() -1
 								if roll_d20_start  > 15:
 										AntithesiSystem.list_of_var_array_for_casuality_effect_[_ramdom_integer_for_ramdom_casuality_event ] = true
+										for i_ in AntithesiSystem.list_of_var_array_for_casuality_effect_:
+											if i_ == false:
+												i_ = true
+
 								elif roll_d20_start  <= 15   and  roll_d20_start  > 5:
 											AntithesiSystem.list_of_var_array_for_casuality_effect_[_ramdom_integer_for_ramdom_casuality_event ] = false
 								else:
 									for i_ in AntithesiSystem.list_of_var_array_for_casuality_effect_:
-											i_ = !i_
+
+												i_ = false
 
 func animation_finished(name_anim):
 		if name_anim == "end":
@@ -225,6 +230,9 @@ func end_turn(name_player_):
 
 
 		get_node("turn_holder").get_node(name_player_.name).emit_signal("_mode_switched_combat_on_off",null,1)
+		get_tree().create_timer(.5).connect("timeout",self,"_on_Timer_timeout",[name_player_])
+
+func delete_after_delay(name_player_):
 		get_node("turn_holder").get_node(name_player_.name).queue_free()
 
 func get_turn_from_name(node_):

@@ -14,13 +14,6 @@ func start_() -> void:
 
 
 
-		get_tree().current_scene.get_node("CanvasLayer/TextureRect").get_node("rotate").connect("button_down",self,"_rotate",[])
-		get_tree().current_scene.get_node("CanvasLayer/TextureRect").get_node("rotate").connect("button_up",self,"_rotate_end",[])
-		get_tree().current_scene.get_node("CanvasLayer/TextureRect").get_node("attack_button").connect("button_down",self,"_attack",[])
-		get_tree().current_scene.get_node("CanvasLayer/TextureRect").get_node("touch_button").connect("button_down",self,"_interact",[])
-		get_tree().current_scene.get_node("CanvasLayer/TextureRect").get_node("attack_push").connect("button_down",self,"_attack",[])
-		get_tree().current_scene.get_node("CanvasLayer/TextureRect").get_node("shoot_button").connect("button_down",self,"_attack",[])
-
 		
 		#mobile_
 		get_tree().current_scene.get_node("CanvasLayer/TextureRect").get_node("back_button_t").connect("pressed",self,"inventory_open_close",[])

@@ -23,12 +23,9 @@ func set_turn_caracters_array(new_char):
 	emit_signal("_mode_switched_combat_on_off",current_turn_caracter,turn_caracters_array.size())
 	
 func switch_current_turn_caracter(previous_character):
-			turn_caracters_array.sort()
+
 			if previous_character == current_turn_caracter:
 
-									if current_turn_caracter == null:
-											sort_array()
-											emit_signal("_mode_switched_combat_on_off",current_turn_caracter,turn_caracters_array.size())
 									print(turn_caracters_array.find(previous_character) + 1)
 									if turn_caracters_array.find(previous_character) + 1  <= turn_caracters_array.size() -1:
 										current_turn_caracter = turn_caracters_array[turn_caracters_array.find(previous_character) + 1 ]
@@ -37,10 +34,6 @@ func switch_current_turn_caracter(previous_character):
 									else:
 											sort_array()
 											emit_signal("_mode_switched_combat_on_off",current_turn_caracter,turn_caracters_array.size())
-			else:
-											sort_array()
-											emit_signal("_mode_switched_combat_on_off",current_turn_caracter,turn_caracters_array.size())
-
 func clear_turn_caracters_array():
 	emit_signal("_mode_switched_combat_on_off",null,0)
 	turn_caracters_array.resize(0)
@@ -50,14 +43,18 @@ func clear_turn_caracters_array():
 	emit_signal("_mode_switched_combat_on_off",null,0)
 
 func sort_array():
+			var next_found := false
 			for i in turn_caracters_array:
 					if i == null:
 							turn_caracters_array.remove(turn_caracters_array.find(i))
 							print("null removed")
 					else:
-							current_turn_caracter = turn_caracters_array[turn_caracters_array.find(i)]
-							print("found new current")
-							break
+						
+							if next_found == false:
+								current_turn_caracter = turn_caracters_array[turn_caracters_array.find(i)]
+								print("found new current")
+								next_found = true
+								break
 
 func get_current_turn_caracter():
 	return current_turn_caracter

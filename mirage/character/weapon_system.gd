@@ -103,9 +103,10 @@ func type_fyre_selector(type,node_):
 							if intersection.collider == null:
 								return
 							if intersection.collider.has_method("decrease_health"):
+								init_attack(intersection.collider)
 								intersection.collider.decrease_health(Item.get_item(items_hand_.name)["damage"] + value)
 								get_tree().create_timer(.9).connect("timeout",self,"play_sound_hit",[intersection.collider])
-								init_attack(intersection.collider)
+
 		elif type == Item.type_fyre.GRAB_PHYSICS:
 				node_.select_npc_actiion = node_.possible_npc_actions.NPC_HOLD
 				last_hit = node_
@@ -125,9 +126,10 @@ func type_fyre_selector(type,node_):
 							if intersection.collider == null:
 								return
 							if intersection.collider.has_method("decrease_health"):
+								init_attack(intersection.collider)
 								intersection.collider.decrease_health(Item.get_item(items_hand_.name)["damage"]  + value)
 								get_tree().create_timer(.9).connect("timeout",self,"play_sound_hit",[intersection.collider])
-								init_attack(intersection.collider)
+
 func _reset_anim_player():
 				sprite_in_hand.set_texture ( null )
 				
@@ -136,17 +138,13 @@ func play_sound_hit(col_):
 		get_parent().get_node("damage").play()
 
 func init_attack(node):
-
 	node.set_player(parent)
+
 	if get_tree().current_scene.get_turn_from_name(parent) == null:
 		get_tree().current_scene.set_turn(parent)
 		get_tree().current_scene.get_turn_from_name(parent).add_to_turn_caracters_array(node)
-			
+
 		get_tree().current_scene.get_turn_from_name(parent).add_to_turn_caracters_array(parent)
-
-		if get_tree().current_scene.get_turn_from_name(parent).current_turn_caracter == null:
-					get_tree().current_scene.get_turn_from_name(parent).current_turn_caracter  = node
-
 
 
 func attack(int_index):

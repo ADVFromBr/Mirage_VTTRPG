@@ -164,6 +164,7 @@ func open_book():
 
 
 func end_turn():
+	
 	get_tree().current_scene.end_turn(self)
 
 func _mode_switched_combat_on_off_(node_,_size_):
@@ -171,20 +172,13 @@ func _mode_switched_combat_on_off_(node_,_size_):
 			if _size_ > 1 :
 					_set_controller(Input_combat_player_controller.new(self))
 					turn_started = true
-			elif _size_ < 2:
-							_set_controller(Input_player_controller.new(self))
-							print("mode switched")
-							if turn_started:
-								get_tree().create_timer(1).connect("timeout",self,"end_turn",[])
-								turn_started = false
-
 
 		if _size_ < 2:
-							_set_controller(Input_player_controller.new(self))
-							print("mode switched")
-							if turn_started:
-								get_tree().create_timer(1).connect("timeout",self,"end_turn",[])
-								turn_started = false
+								_set_controller(Input_player_controller.new(self))
+								print("mode switched")
+								if turn_started:
+									get_tree().create_timer(1).connect("timeout",self,"end_turn",[])
+									turn_started = false
 
 func hestore_health(helth_ : int):
 	tween.interpolate_method (self, "_hestore_health_twean", get_health(), helth_, 8, Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
@@ -204,8 +198,6 @@ func _hestore_health_twean(helth_):
 func _interact():
 	play_sound("res://sfx/UI/click.wav")
 	interactor._interact()
-func _on_Timer_timeout():
-	weapon.set_can_use(true)
 
 func get_Inventory():
 	return Inventory
@@ -234,8 +226,8 @@ func _attack_3():
 						if dialogue.visible == false:
 								weapon.attack(Item.type_fyre.MUSK_SHOOT)
 
-								weapon.set_can_use(false)
-								get_tree().create_timer(3).connect("timeout",self,"_on_Timer_timeout",[])
+
+
 	if item_._items_hand_:
 				if Inventory.visible == false:
 					if dialogue.visible == false:
@@ -249,8 +241,8 @@ func _attack_2():
 						if dialogue.visible == false:
 								weapon.attack(Item.type_fyre.GRAB_PHYSICS)
 
-								weapon.set_can_use(false)
-								get_tree().create_timer(3).connect("timeout",self,"_on_Timer_timeout",[])
+
+
 	if item_._items_hand_:
 				if Inventory.visible == false:
 					if dialogue.visible == false:
@@ -263,8 +255,8 @@ func _attack():
 						if dialogue.visible == false:
 								weapon.attack(Item.type_fyre.FIRE_BEEN)
 
-								weapon.set_can_use(false)
-								get_tree().create_timer(3).connect("timeout",self,"_on_Timer_timeout",[])
+
+
 	if item_._items_hand_:
 				if Inventory.visible == false:
 					if dialogue.visible == false:

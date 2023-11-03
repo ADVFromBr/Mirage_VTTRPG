@@ -11,16 +11,7 @@ func _init(_parent_ : Node):
 # var b = "text"
 
 func start_() -> void:
-
-
-		get_tree().current_scene.get_node("CanvasLayer/TextureRect").get_node("rotate").connect("button_down",self,"_rotate",[])
-		get_tree().current_scene.get_node("CanvasLayer/TextureRect").get_node("rotate").connect("button_up",self,"_rotate_end",[])
-		get_tree().current_scene.get_node("CanvasLayer/TextureRect").get_node("attack_button").connect("button_down",self,"_attack",[])
-		get_tree().current_scene.get_node("CanvasLayer/TextureRect").get_node("touch_button").connect("button_down",self,"_interact",[])
-		get_tree().current_scene.get_node("CanvasLayer/TextureRect").get_node("attack_push").connect("button_down",self,"_attack",[])
-		get_tree().current_scene.get_node("CanvasLayer/TextureRect").get_node("shoot_button").connect("button_down",self,"_attack",[])
-
-		
+	
 		#mobile_
 		get_tree().current_scene.get_node("CanvasLayer/TextureRect").get_node("back_button_t").connect("pressed",self,"inventory_open_close",[])
 		get_tree().current_scene.get_node("CanvasLayer/TextureRect").get_node("attack_button_t").connect("pressed",self,"_attack",[0])
@@ -38,13 +29,17 @@ var index_attack : int
 		# Called when the node enters the scene tree for the first time.
 
 func  _attack(_index_):
-	
-		if get_tree().current_scene.get_turn_from_name(parent).current_turn_caracter == parent:
-			index_attack = _index_
-			_attack_command.execute(parent,self)
-			
-			get_tree().current_scene.get_turn_from_name(parent).switch_current_turn_caracter(parent)
+	if get_tree().current_scene.get_turn_from_name(parent) == null:
+						return
 
+	if get_tree().current_scene.get_turn_from_name(parent).current_turn_caracter != parent:
+			return
+	
+	
+	index_attack = _index_
+	_attack_command.execute(parent,self)
+	get_tree().current_scene.get_turn_from_name(parent).switch_current_turn_caracter(parent)
+	parent.weapon.set_can_use(false)
 			
 			
 func  _interact():
@@ -59,12 +54,17 @@ onready var last_pos  = parent.global_transform.origin
 var delta_check_for_movement := 0.0
 func _process(delta):
 
-		if get_tree().current_scene.get_turn_from_name(parent) == null:
-						return
+				input_  = Vector3.ZERO
+				_input_command.execute(parent,self)
+			
+				if get_tree().current_scene.get_turn_from_name(parent) == null:
+								return
 
-		if get_tree().current_scene.get_turn_from_name(parent).current_turn_caracter == parent:
+				if get_tree().current_scene.get_turn_from_name(parent).current_turn_caracter != parent:
+								return
 				_get_model_oriented_input()
-
+				if parent.weapon.can_use ==false:
+					parent.weapon.set_can_use(true)
 				if input_ != Vector3.ZERO:
 							delta_check_for_movement = delta_check_for_movement + delta
 
@@ -74,11 +74,8 @@ func _process(delta):
 									delta_check_for_movement = 0.0
 				else:
 							delta_check_for_movement = 0.0
-		else :
-			delta_check_for_movement = 0.0
-			input_  = Vector3.ZERO
-			_input_command.execute(parent,self)
-		
+				
+
 func _get_model_oriented_input():
 	
 		var input_left_right = (

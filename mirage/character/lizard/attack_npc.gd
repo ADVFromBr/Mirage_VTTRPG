@@ -14,9 +14,14 @@ var attack_delayed := false
 func run(node,player_,path_node,path,delta):
 					if get_tree().current_scene.get_turn_from_name(player_).current_turn_caracter == node:
 							node.select_npc_actiion = node.possible_npc_actions.NPC_ATTACK
-							get_tree().create_timer(2.3).connect("timeout",self,"attack_delay_",[node,player_,path,path_node,delta])
 							attack_delayed = true
-							
+							yield(get_tree().create_timer(2.0), "timeout")
+
+							if get_tree().current_scene.get_turn_from_name(player_).current_turn_caracter == node:
+									_attack_(node,player_,path,path_node,delta)
+									get_tree().current_scene.get_turn_from_name(player_).switch_current_turn_caracter(node)
+
+
 func attack_delay_(node,player_,path,path_node,delta):
 	if attack_delayed:
 		attack_delayed = false

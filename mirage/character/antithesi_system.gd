@@ -37,21 +37,21 @@ func player_grabed_tem_from_item_ground_update(item_):
 var items_that_cant_trade := []
 var is_player_able_to_trade := true
 
-var list_of_var_array_for_casuality_effect_= [is_player_able_to_trade,enable_rum_to_player_add,]
+var list_of_var_array_for_casuality_effect_= [is_player_able_to_trade,not_enable_rum_to_player_add,]
 
 
 var number_of_player_ran_times := 0
-var enable_rum_to_player_add := false
+var not_enable_rum_to_player_add := true
 
 func player_ran_upadate(number_of_enemies_left_in_fight):
 	number_of_player_ran_times = number_of_player_ran_times + number_of_enemies_left_in_fight
 	
 	if number_of_player_ran_times > 6:
-		enable_rum_to_player_add = true
+		not_enable_rum_to_player_add = false
 
 
 	elif number_of_player_ran_times <= 2:
-		enable_rum_to_player_add = false
+		not_enable_rum_to_player_add = true
 
 
 var current_distance_traveled_ := 0

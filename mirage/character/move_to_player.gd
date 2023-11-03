@@ -14,7 +14,7 @@ var delta_check_for_movement := 0.0
 # Called when the node enters the scene tree for the first time.
 func run(node,player_,path,path_node,delta):
 					if get_tree().current_scene.get_turn_from_name(player_).current_turn_caracter == node:				
-										if AntithesiSystem.enable_rum_to_player_add:
+										if !AntithesiSystem.not_enable_rum_to_player_add:
 												var player_dir_proxy = player_.global_transform.origin
 												player_dir_proxy.y = node.global_transform.origin.y
 												var move_dir = node.global_transform.origin - player_dir_proxy
