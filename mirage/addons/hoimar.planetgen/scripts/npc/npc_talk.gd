@@ -32,11 +32,15 @@ func open_menu(_player_):
 						discount.append(i.name)				
 				
 				
+				
+				
 				player_char.get_Inventory().get_node("get_menu").visible = true
 				player_char.get_Inventory().get_node("get_menu")._init_func(self)
 				player_char.get_Inventory().set_adds_bkpk(player_char.get_Inventory().get_node("get_menu"))
+				player_char.get_Inventory().move_child(player_char.get_Inventory().get_node("get_menu"), player_char.get_Inventory().get_child_count())
 				for i in current_item_:
 						player_char.get_Inventory().pickup_item_bag(i.name)
+
 
 				player_char.get_Inventory().get_node("get_menu").connect("bag_update",self,"removed_weapon_item_array_",[])
 				player_char.connect("open_close_menu",self,"_open_close_menu",[])
@@ -44,13 +48,17 @@ func open_menu(_player_):
 
 func _open_close_menu(inventory_visibility):
 	if !inventory_visibility:
+			if !player_char:
+				return
+			
+			if !player_char.get_Inventory().has_node("get_menu"):
+				return
+			
+			
 			player_char.get_Inventory().get_node("get_menu").disconnect("bag_update",self,"removed_weapon_item_array_")
 			player_char.disconnect("open_close_menu",self,"_open_close_menu")
-
+			player_char.get_Inventory().get_node("get_menu").queue_free()
 			player_char = null
-
-
-	
 
 
 func removed_weapon_item_array_(_item_,item_array_size_,start_item_size_new):
