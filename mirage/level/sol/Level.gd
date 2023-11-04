@@ -277,7 +277,9 @@ func rool_a_d20_func(node_,ui_,type_roll,d_twenty_,d_twenty_node):
 func rool_a_d_twenty(node_,ui_,type_roll):
 	var d_twenty_ = randi() % 20
 	var d_twenty_node = load("res://ui/d_tweenty.tscn").instance()
-
+		
+	if d_twenty_ == 0:
+		d_twenty_ = 1
 	if !ui_.has_node("d_tweenty"):
 			rool_a_d20_func(node_,ui_,type_roll,d_twenty_,d_twenty_node)
 
@@ -290,6 +292,8 @@ func rool_a_d_twenty(node_,ui_,type_roll):
 func rool_a_d_twenty_casuallity(node_,ui_):
 	var d_twenty_ = randi() % 20
 	var d_twenty_node = load("res://ui/d_tweenty_casuall]ity.tscn").instance()
+	if d_twenty_ == 0:
+		d_twenty_ = 1
 	if !ui_.has_node("d_tweenty"):
 			rool_a_d_twenty_casuallity_func(node_,ui_,d_twenty_,d_twenty_node)
 
