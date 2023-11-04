@@ -15,7 +15,7 @@ script = ExtResource( 4 )
 
 [node name="stay_npc" parent="." instance=ExtResource( 9 )]
 max_in_view = 555
-lost_sight = 35
+lost_sight = 26
 
 [node name="either_decorator" type="Node" parent="stay_npc"]
 script = ExtResource( 2 )
