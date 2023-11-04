@@ -2,7 +2,7 @@
 
 [ext_resource path="res://character/lizard/npc_oppoent.gd" type="Script" id=1]
 [ext_resource path="res://character/Sprite.gd" type="Script" id=2]
-[ext_resource path="res://character/thief/spritesheet (24) - Copia.png" type="Texture" id=3]
+[ext_resource path="res://character/player/spritesheet (27).png" type="Texture" id=3]
 [ext_resource path="res://character/attack_npc_tree_open_word.tscn" type="PackedScene" id=4]
 [ext_resource path="res://sfx/footstep/530588__nox_sound__footsteps_boots_tile_mono.wav" type="AudioStream" id=5]
 [ext_resource path="res://sfx/character/item/gun/682464__supersouper__revolver-fire.wav" type="AudioStream" id=6]
